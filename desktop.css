@@ -2,7 +2,7 @@
   --sidebar-w: 240px;
 }
 
-/* Desktop struktúra */
+
 .app-container {
   display: flex;
   min-height: 100vh;
@@ -33,7 +33,7 @@ main {
   gap: 28px;
 }
 
-/* Oldalsó menüsáv (Sidebar) */
+
 .navigation {
   position: sticky;
   top: 0;
