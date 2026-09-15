@@ -1,0 +1,65 @@
+:root {
+  --bg: #090d16;
+  --surface: #131b2e;
+  --border: #1e293b;
+  --primary: #22c55e;
+  --primary-hover: #16a34a;
+  --text: #f8fafc;
+  --muted: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* Profil & Header elemek */
+.user-profile { display: flex; align-items: center; gap: 12px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--border); border: 1px solid rgba(255,255,255,0.1); color: var(--primary); display: grid; place-items: center; font: bold 0.9rem 'Inter'; }
+.user-info { display: flex; flex-direction: column; }
+.greeting { font-size: 0.75rem; color: var(--muted); }
+.user-name { font-size: 0.95rem; font-weight: 600; }
+
+/* Gombok & Bemenetek */
+.icon-btn { background: none; border: none; color: var(--muted); cursor: pointer; padding: 8px; border-radius: 8px; display: grid; place-items: center; }
+.icon-btn i { width: 20px; height: 20px; }
+
+.btn-primary, .btn-secondary, .btn-join { display: flex; align-items: center; justify-content: center; gap: 8px; border-radius: 10px; cursor: pointer; transition: 0.2s; font-size: 0.875rem; }
+.btn-primary { background: var(--primary); color: #052e16; border: none; font-weight: 600; padding: 12px 18px; }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: rgba(255,255,255,0.04); color: var(--text); border: 1px solid var(--border); font-weight: 500; padding: 12px 18px; }
+.btn-join { background: none; border: 1px solid var(--border); color: var(--text); padding: 8px 16px; font-size: 0.85rem; }
+.btn-join:hover { background: var(--border); }
+
+/* Kártyák & Csoportok */
+.hero-box { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+.hero-box h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; }
+.hero-box p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 20px; }
+.action-row { display: flex; gap: 12px; }
+
+.section-header { font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin-bottom: 14px; }
+.group-list { display: flex; flex-direction: column; gap: 12px; }
+.group-item { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; }
+.group-meta h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 4px; }
+.group-meta p { font-size: 0.8rem; color: var(--muted); }
+
+/* Modal */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: grid; place-items: center; z-index: 1000; opacity: 0; pointer-events: none; transition: 0.2s; padding: 20px; }
+.modal-backdrop.open { opacity: 1; pointer-events: auto; }
+.modal-panel { background: var(--surface); border: 1px solid var(--border); width: 100%; max-width: 440px; border-radius: 16px; padding: 24px; transform: scale(0.95); transition: 0.2s; }
+.modal-backdrop.open .modal-panel { transform: scale(1); }
+.modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+.input-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.input-field label { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.input-field input, .input-field textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 8px; font-size: 0.9rem; outline: none; }
+.input-field input:focus, .input-field textarea:focus { border-color: var(--primary); }

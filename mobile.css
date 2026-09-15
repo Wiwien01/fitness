@@ -1,0 +1,66 @@
+/* Mobil struktúra igazítása */
+.app-container { display: block; }
+.main-wrapper { width: 100%; }
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+main {
+  /* Alul elég helyet hagyunk a fix menünek, hogy ne takarja ki a tartalom alját */
+  padding: 20px 20px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Alsó Navigáció - Javított igazítással */
+.navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  z-index: 999;
+  
+  /* Modern mobil böngészőknél kezeli az alsó visszalépő / főképernyő sávot */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.navigation .brand { display: none; }
+
+.nav-links {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px 0 12px;
+  margin: 0;
+  list-style: none;
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  flex: 1; /* Egyenletes elosztást biztosít a gomboknak */
+  text-align: center;
+}
+
+.nav-link i { width: 20px; height: 20px; }
+.nav-link.active { color: var(--primary); }
