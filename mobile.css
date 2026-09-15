@@ -1,4 +1,4 @@
-/* Mobil struktúra igazítása */
+
 .app-container { display: block; }
 .main-wrapper { width: 100%; }
 
@@ -15,14 +15,13 @@ header {
 }
 
 main {
-  /* Alul elég helyet hagyunk a fix menünek, hogy ne takarja ki a tartalom alját */
+ 
   padding: 20px 20px 120px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
 
-/* Alsó Navigáció - Javított igazítással */
 .navigation {
   position: fixed;
   bottom: 0;
@@ -33,7 +32,7 @@ main {
   border-top: 1px solid var(--border);
   z-index: 999;
   
-  /* Modern mobil böngészőknél kezeli az alsó visszalépő / főképernyő sávot */
+
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
@@ -58,7 +57,7 @@ main {
   text-decoration: none;
   font-size: 0.75rem;
   font-weight: 500;
-  flex: 1; /* Egyenletes elosztást biztosít a gomboknak */
+  flex: 1;
   text-align: center;
 }
 
