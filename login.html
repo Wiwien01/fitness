@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bejelentkezés - FitnessProgress</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="mobile.css" media="(max-width: 767px)">
+  <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <div class="auth-wrapper">
+    <!-- Bal oldali vizuális panel (képpel és idézettel) -->
+    <div class="auth-visual">
+      <div class="visual-overlay"></div>
+      <div class="visual-content">
+        <div class="visual-tag">FitnessProgress</div>
+        <h2>Ahol a következetesség sikerré válik.</h2>
+        <p>Kövesd az edzéseidet, számold a kalóriákat és érd el a céljaidat a közösséggel együtt.</p>
+      </div>
+    </div>
+
+    <!-- Jobb oldali űrlap panel -->
+    <div class="auth-container">
+      <div class="auth-card">
+        <div class="auth-brand">
+          <h1>Üdvözlünk!</h1>
+          <p>Lépj be a fiókodba a folytatáshoz</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="tab-btn active" id="tabLoginBtn">Bejelentkezés</button>
+          <button class="tab-btn" id="tabRegisterBtn">Regisztráció</button>
+        </div>
+
+        <!-- Social Login gombok -->
+        <div class="social-login">
+          <button type="button" class="btn-secondary social-btn">
+            <i data-lucide="chrome"></i> Google
+          </button>
+          <button type="button" class="btn-secondary social-btn">
+            <i data-lucide="apple"></i> Apple
+          </button>
+        </div>
+
+        <div class="divider">
+          <span>vagy e-mail címmel</span>
+        </div>
+
+        <!-- Bejelentkezési Form -->
+        <form id="loginForm" class="auth-form active">
+          <div class="input-field">
+            <label for="login-email">E-mail cím</label>
+            <input type="email" id="login-email" placeholder="pelda@email.hu" required>
+          </div>
+
+          <div class="input-field">
+            <label for="login-password">Jelszó</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+          </div>
+
+          <div class="form-options">
+            <label class="remember-me">
+              <input type="checkbox"> Emlékezz rám
+            </label>
+            <a href="#" class="forgot-pass">Elfelejtett jelszó?</a>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">
+            Bejelentkezés <i data-lucide="log-in"></i>
+          </button>
+        </form>
+
+        <!-- Regisztrációs Form -->
+        <form id="registerForm" class="auth-form">
+          <div class="input-field">
+            <label for="reg-name">Teljes név</label>
+            <input type="text" id="reg-name" placeholder="Kovács Tamás" required>
+          </div>
+
+          <div class="input-field">
+            <label for="reg-email">E-mail cím</label>
+            <input type="email" id="reg-email" placeholder="pelda@email.hu" required>
+          </div>
+
+          <div class="input-field">
+            <label for="reg-password">Jelszó</label>
+            <input type="password" id="reg-password" placeholder="Minimálisan 8 karakter" required>
+          </div>
+
+          <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">
+            Fiók létrehozása <i data-lucide="user-plus"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
