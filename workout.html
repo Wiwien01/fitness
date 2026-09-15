@@ -1,10 +1,10 @@
-<!-- index.html -->
+<!-- workout.html -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitnessProgress - Közösség</title>
+  <title>Edzés - FitnessProgress</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -19,11 +19,11 @@
     <nav class="navigation">
       <div class="brand">FitnessProgress</div>
       <div class="nav-links">
-        <a href="index.html" class="nav-link active">
+        <a href="index.html" class="nav-link">
           <i data-lucide="users"></i>
           <span>Közösség</span>
         </a>
-        <a href="workout.html" class="nav-link">
+        <a href="workout.html" class="nav-link active">
           <i data-lucide="dumbbell"></i>
           <span>Edzés</span>
         </a>
@@ -47,7 +47,6 @@
             <span class="user-name">Kovács Tamás</span>
           </div>
         </div>
-        
         <button class="icon-btn" aria-label="Értesítések">
           <i data-lucide="bell"></i>
         </button>
@@ -55,75 +54,48 @@
 
       <main>
         <section class="hero-box">
-          <h2>Még nem vagy csoportban</h2>
-          <p>A közös edzés segít a rendszerességben. Hozz létre egy csoportot a barátaidnak, vagy csatlakozz egy meglévőhöz.</p>
+          <h2>Edzéstervek & Napló</h2>
+          <p>Kövesd nyomon a napi edzéseidet, vagy indíts el egy új edzéstervet a fejlődésed érdekében.</p>
           
           <div class="action-row">
-            <button class="btn-primary" id="openModalBtn">
-              <i data-lucide="plus"></i> Új csoport
+            <button class="btn-primary">
+              <i data-lucide="play"></i> Edzés indítása
             </button>
             <button class="btn-secondary">
-              <i data-lucide="key-round"></i> Meghívókód
+              <i data-lucide="plus"></i> Új terv
             </button>
           </div>
         </section>
 
         <section>
-          <div class="section-header">Ajánlott nyilvános csoportok</div>
+          <div class="section-header">Közelgő & Aktív edzések</div>
           <div class="group-list">
             <div class="group-item">
               <div class="group-meta">
-                <h3>csoport1</h3>
-                <p>leírás</p>
+                <h3>Felsőtest - A nap</h3>
+                <p>Mell, Váll, Tricepsz • 45 perc</p>
               </div>
-              <button class="btn-join">Csatlakozás</button>
+              <button class="btn-join">Indítás</button>
             </div>
 
             <div class="group-item">
               <div class="group-meta">
-                <h3>csoport2</h3>
-                <p>leírás</p>
+                <h3>Alsótest - B nap</h3>
+                <p>Láb, Has • 50 perc</p>
               </div>
-              <button class="btn-join">Csatlakozás</button>
+              <button class="btn-join">Indítás</button>
             </div>
 
             <div class="group-item">
               <div class="group-meta">
-                <h3>csoport3</h3>
-                <p>leírás</p>
+                <h3>Kardió & Core</h3>
+                <p>Futópad, Plánk • 30 perc</p>
               </div>
-              <button class="btn-join">Csatlakozás</button>
+              <button class="btn-join">Indítás</button>
             </div>
           </div>
         </section>
       </main>
-    </div>
-  </div>
-
-  <div class="modal-backdrop" id="groupModal">
-    <div class="modal-panel">
-      <div class="modal-head">
-        <h3>Új csoport létrehozása</h3>
-        <button class="icon-btn" id="closeModalBtn">
-          <i data-lucide="x"></i>
-        </button>
-      </div>
-      
-      <form id="createGroupForm">
-        <div class="input-field">
-          <label for="g-name">Csoport neve</label>
-          <input type="text" id="g-name" placeholder="pl. Hétvégi Futók" required>
-        </div>
-
-        <div class="input-field">
-          <label for="g-desc">Leírás (szabadon választható)</label>
-          <textarea id="g-desc" rows="3" placeholder="Mi a csoport célja?"></textarea>
-        </div>
-
-        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
-          Létrehozás
-        </button>
-      </form>
     </div>
   </div>
 
