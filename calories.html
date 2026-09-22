@@ -1,4 +1,3 @@
-<!-- calories.html -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
@@ -12,26 +11,39 @@
   <link rel="stylesheet" href="common.css">
   <link rel="stylesheet" href="mobile.css" media="(max-width: 767px)">
   <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
+
+  <style>
+    /* Képek és Makrók stílusa */
+    .food-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .food-img {
+      width: 56px;
+      height: 56px;
+      border-radius: 10px;
+      object-fit: cover;
+      background: var(--border);
+    }
+    .macro-bar-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .macro-box {
+      background: var(--bg);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .macro-title { color: var(--muted); margin-bottom: 4px; font-size: 0.75rem; }
+    .macro-val { font-weight: 600; color: var(--text); }
+  </style>
 </head>
 <body>
-  <header>
-  <div class="user-profile">
-    <div class="avatar">--</div>
-    <div class="user-info">
-      <span class="greeting">Üdv újra,</span>
-      <span class="user-name">Felhasználó</span>
-    </div>
-  </div>
-  
-  <div style="display: flex; gap: 8px;">
-    <button class="icon-btn" aria-label="Értesítések">
-      <i data-lucide="bell"></i>
-    </button>
-    <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
-      <i data-lucide="log-out"></i>
-    </button>
-  </div>
-</header>
 
   <div class="app-container">
     <nav class="navigation">
@@ -59,61 +71,126 @@
     <div class="main-wrapper">
       <header>
         <div class="user-profile">
-          <div class="avatar">KT</div>
+          <div class="avatar">--</div>
           <div class="user-info">
             <span class="greeting">Üdv újra,</span>
-            <span class="user-name">Kovács Tamás</span>
+            <span class="user-name">Felhasználó</span>
           </div>
         </div>
-        <button class="icon-btn" aria-label="Értesítések">
-          <i data-lucide="bell"></i>
-        </button>
+        
+        <div style="display: flex; gap: 8px;">
+          <button class="icon-btn" aria-label="Értesítések">
+            <i data-lucide="bell"></i>
+          </button>
+          <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
+            <i data-lucide="log-out"></i>
+          </button>
+        </div>
       </header>
 
       <main>
+        <!-- Napi összefoglaló kártya -->
         <section class="hero-box">
-          <h2>Napi kalóriakeret: 2 100 kcal</h2>
-          <p>Eddig bevíve: 1 350 kcal | Megmaradt: 750 kcal</p>
+          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+              <h2 id="calorieTarget">Napi kalóriakeret: 2 100 kcal</h2>
+              <p id="calorieStats">Eddig bevíve: 0 kcal | Megmaradt: 2 100 kcal</p>
+            </div>
+            <button class="btn-secondary" id="editTargetBtn" style="padding: 6px 12px; font-size: 0.8rem;">
+              <i data-lucide="settings"></i> Limit
+            </button>
+          </div>
           
-          <div class="action-row">
-            <button class="btn-primary">
+          <div class="action-row" style="margin-top: 16px;">
+            <button class="btn-primary" id="openFoodModalBtn">
               <i data-lucide="plus"></i> Étel hozzáadása
             </button>
-            <button class="btn-secondary">
-              <i data-lucide="barcode"></i> Vonalkód beolvasása
-            </button>
+          </div>
+
+          <!-- EXTRA: Makrotápanyag összefoglaló -->
+          <div class="macro-bar-container">
+            <div class="macro-box">
+              <div class="macro-title">Fehérje</div>
+              <div class="macro-val" id="totalProtein">0 g</div>
+            </div>
+            <div class="macro-box">
+              <div class="macro-title">Szénhidrát</div>
+              <div class="macro-val" id="totalCarbs">0 g</div>
+            </div>
+            <div class="macro-box">
+              <div class="macro-title">Zsír</div>
+              <div class="macro-val" id="totalFat">0 g</div>
+            </div>
           </div>
         </section>
 
+        <!-- Étkezések listája -->
         <section>
           <div class="section-header">Mai étkezések</div>
-          <div class="group-list">
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Reggeli</h3>
-                <p>Zabpehely, fehérjpor, áfonya • 420 kcal</p>
-              </div>
-              <button class="btn-join">Módosítás</button>
-            </div>
-
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Ebéd</h3>
-                <p>Csirkemell, rizs, párolt zöldség • 650 kcal</p>
-              </div>
-              <button class="btn-join">Módosítás</button>
-            </div>
-
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Uzsonna</h3>
-                <p>Görög joghurt, mandula • 280 kcal</p>
-              </div>
-              <button class="btn-join">Módosítás</button>
-            </div>
+          <div class="group-list" id="foodList">
+            <!-- Dinamikusan töltődik fel -->
           </div>
         </section>
       </main>
+    </div>
+  </div>
+
+  <!-- Étel hozzáadása Modál -->
+  <div class="modal-backdrop" id="foodModal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h3>Új étel rögzítése</h3>
+        <button class="icon-btn" id="closeFoodModalBtn">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="addFoodForm">
+        <div class="input-field">
+          <label for="food-category">Étkezés típusa</label>
+          <select id="food-category" style="background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 8px; font-size: 0.9rem; outline: none; width: 100%;">
+            <option value="Reggeli">Reggeli</option>
+            <option value="Ebéd">Ebéd</option>
+            <option value="Uzsonna">Uzsonna</option>
+            <option value="Vacsora">Vacsora</option>
+          </select>
+        </div>
+
+        <div class="input-field">
+          <label for="food-name">Étel megnevezése</label>
+          <input type="text" id="food-name" placeholder="pl. Csirkemell rizzsel" required>
+        </div>
+
+        <div class="input-field">
+          <label for="food-calories">Kalória (kcal)</label>
+          <input type="number" id="food-calories" placeholder="pl. 450" min="1" required>
+        </div>
+
+        <div class="input-field">
+          <label for="food-image">Kép URL (Opcionális)</label>
+          <input type="url" id="food-image" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <!-- Makrók (Opcionális) -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+          <div class="input-field">
+            <label for="food-protein">Fehérje (g)</label>
+            <input type="number" id="food-protein" placeholder="0">
+          </div>
+          <div class="input-field">
+            <label for="food-carbs">Ch (g)</label>
+            <input type="number" id="food-carbs" placeholder="0">
+          </div>
+          <div class="input-field">
+            <label for="food-fat">Zsír (g)</label>
+            <input type="number" id="food-fat" placeholder="0">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
+          Hozzáadás
+        </button>
+      </form>
     </div>
   </div>
 
