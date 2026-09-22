@@ -4,6 +4,51 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
   }
 
+  // Aktuális bejelentkezett felhasználó lekérése
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const isLoginPage = window.location.pathname.includes('login.html');
+
+  // Ha nincs bejelentkezve és nem a login oldalon van, átirányítás a login.html-re
+  if (!currentUser && !isLoginPage) {
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // Felhasználói adatok frissítése a felületen (ha be van jelentkezve)
+  if (currentUser) {
+    // Név frissítése
+    const userNameDisplays = document.querySelectorAll('.user-name');
+    userNameDisplays.forEach(el => {
+      el.textContent = currentUser.name;
+    });
+
+    // Monogram kiszámítása a profilképhez (pl. Kovács Tamás -> KT)
+    const nameParts = currentUser.name.trim().split(' ');
+    let initials = '';
+    if (nameParts.length >= 2) {
+      initials = nameParts[0][0] + nameParts[nameParts.length - 1][0];
+    } else if (nameParts.length === 1 && nameParts[0].length > 0) {
+      initials = nameParts[0][0];
+    }
+    initials = initials.toUpperCase();
+
+    // Profilkép / Avatar frissítése
+    const avatarDisplays = document.querySelectorAll('.avatar');
+    avatarDisplays.forEach(el => {
+      el.textContent = initials;
+    });
+  }
+
+  // --- KIJELENTKEZÉS KEZELÉSE ---
+  const logoutBtns = document.querySelectorAll('.logout-btn');
+  logoutBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    });
+  });
+
   // Modál kezelése az index.html oldalon
   const openModalBtn = document.getElementById('openModalBtn');
   const closeModalBtn = document.getElementById('closeModalBtn');
@@ -26,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const registerForm = document.getElementById('registerForm');
 
   if (tabLoginBtn && tabRegisterBtn && loginForm && registerForm) {
-    // Fülváltás logic
     tabLoginBtn.addEventListener('click', () => {
       tabLoginBtn.classList.add('active');
       tabRegisterBtn.classList.remove('active');
@@ -41,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       loginForm.classList.remove('active');
     });
 
-    // 1. Regisztráció
+    // Regisztráció
     registerForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -49,29 +93,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const email = document.getElementById('reg-email').value.trim().toLowerCase();
       const password = document.getElementById('reg-password').value;
 
-      // Elmentett felhasználók betöltése
       const users = JSON.parse(localStorage.getItem('users')) || [];
 
-      // Ellenőrzés: létezik-e már az e-mail cím
-      const userExists = users.some(u => u.email === email);
-      if (userExists) {
+      if (users.some(u => u.email === email)) {
         alert('Ezzel az e-mail címmel már regisztráltak!');
         return;
       }
 
-      // Új felhasználó mentése
       const newUser = { name, email, password };
       users.push(newUser);
       localStorage.setItem('users', JSON.stringify(users));
 
-      // Aktív munkamenet elmentése
       localStorage.setItem('currentUser', JSON.stringify({ name: newUser.name, email: newUser.email }));
 
       alert('Sikeres regisztráció!');
       window.location.href = 'index.html';
     });
 
-    // 2. Bejelentkezés
+    // Bejelentkezés
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -79,8 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = document.getElementById('login-password').value;
 
       const users = JSON.parse(localStorage.getItem('users')) || [];
-
-      // Felhasználó keresése
       const user = users.find(u => u.email === email && u.password === password);
 
       if (!user) {
@@ -88,34 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Bejelentkezett felhasználó elmentése
       localStorage.setItem('currentUser', JSON.stringify({ name: user.name, email: user.email }));
 
       window.location.href = 'index.html';
-    });
-  }
-
-  // --- AKTUÁLIS FELHASZNÁLÓ KEZELÉSE AZ INDEX.HTML OLDALON ---
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-
-  // Ha nem a login.html oldalon vagyunk és nincs bejelentkezve felhasználó:
-  if (!currentUser && !window.location.pathname.includes('login.html')) {
-    window.location.href = 'login.html';
-  }
-
-  // Felhasználó nevének megjelenítése (ha van megfelelő elem az oldalon, pl. .user-name)
-  const userNameDisplay = document.querySelector('.user-name');
-  if (userNameDisplay && currentUser) {
-    userNameDisplay.textContent = currentUser.name;
-  }
-
-  // Kijelentkezés gomb kezelése (ha van pl. #logoutBtn az oldalon)
-  const logoutBtn = document.getElementById('logoutBtn');
-  if (logoutBtn) {
-    logoutBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      localStorage.removeItem('currentUser');
-      window.location.href = 'login.html';
     });
   }
 });
