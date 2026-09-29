@@ -243,9 +243,9 @@ document.addEventListener('DOMContentLoaded', () => {
         { day: 'Hétfő', name: 'Push (Mell, Váll, Tricepsz)', details: ['Fekvenyomás rúddal: 4x8-10', 'Incline kézi súlyzós nyomás: 3x10', 'Mellről nyomás: 3x10', 'Tricepsz letolás csigán: 4x12'] },
         { day: 'Kedd', name: 'Pull (Hát, Bicepsz, Hátsó váll)', details: ['Mellhez húzás / Húzódzkodás: 4x8', 'Döntött törzsű evezés: 4x10', 'Facepull (Arcrashúzás): 3x15', 'Bicepsz franciarúddal: 3x12'] },
         { day: 'Szerda', name: 'Legs (Láb, Has)', details: ['Guggolás rúddal: 4x8', 'Román felhúzás (RDL): 4x10', 'Lábtolás gépben: 3x12', 'Vádli állva + Hasprés: 4x15'] },
-        { day: 'Csütörtök', name: 'Pihenőnap / Aktív regeneráció', details: ['Könnyű séta, mobilizáció és nyújtás'] },
-        { day: 'Péntek', name: 'Push (Ismétlés / Váll fókusz)', details: ['Kézi súlyzós nyomás: 4x10', 'Oldalemelés: 4x12-15', 'Tolódzkodás: 3x8-10'] },
-        { day: 'Szombat', name: 'Pull (Ismétlés / Hát fókusz)', details: ['T-rúdos evezés: 4x10', 'Egykezes evezés kézi súlyzóval: 3x12', 'Kalapács bicepsz: 3x12'] },
+        { day: 'Csütörtök', name: 'Pihenőnap', details: ['Könnyű séta, mobilizáció és nyújtás'] },
+        { day: 'Péntek', name: 'Push (Váll fókusz)', details: ['Kézi súlyzós nyomás: 4x10', 'Oldalemelés: 4x12-15', 'Tolódzkodás: 3x8-10'] },
+        { day: 'Szombat', name: 'Pull (Hát fókusz)', details: ['T-rúdos evezés: 4x10', 'Egykezes evezés kézi súlyzóval: 3x12', 'Kalapács bicepsz: 3x12'] },
         { day: 'Vasárnap', name: 'Pihenőnap', details: ['Teljes pihenés és regenerálódás'] }
       ]
     },
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { day: 'Hétfő', name: 'Mell nap', details: ['Fekvenyomás rúddal: 4x8', 'Ferde pados nyomás: 4x10', 'Tárogatás csigán: 3x12'] },
         { day: 'Kedd', name: 'Hát nap', details: ['Felhúzás: 4x6', 'Lehúzás széles fogással: 4x10', 'Evezés gépben: 3x12'] },
         { day: 'Szerda', name: 'Váll nap', details: ['Mellről nyomás: 4x8', 'Oldalemelés: 4x12', 'Döntött törzsű oldalemelés: 3x15'] },
-        { day: 'Csütörtök', name: 'Kar nap (Bicepsz & Tricepsz)', details: ['Bicepsz rúddal: 4x10', 'Koponyaürítő: 4x10', 'Tricepsz letolás: 3x12'] },
+        { day: 'Csütörtök', name: 'Kar nap', details: ['Bicepsz rúddal: 4x10', 'Koponyaürítő: 4x10', 'Tricepsz letolás: 3x12'] },
         { day: 'Péntek', name: 'Láb nap', details: ['Guggolás: 4x8', 'Lábhajítás gépben: 4x12', 'Lábnyújtás gépben: 3x12', 'Vádli: 4x15'] },
         { day: 'Szombat', name: 'Pihenőnap', details: ['Pihenés'] },
         { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
@@ -285,11 +285,11 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1200&auto=format&fit=crop',
       description: 'Kímélő, mobilizációra és ízületi stabilitásra épülő edzésterv sérülések utáni visszatéréshez, regenerációhoz vagy gyógytornához.',
       schedule: [
-        { day: 'Hétfő', name: 'Felsőtest mobilitás & törzsstabilitás', details: ['Rotátorköpeny gyakorlatok', 'Plank tartások', 'Gumiszalagos húzások'] },
-        { day: 'Kedd', name: 'Alsótest & csípő mobilizáció', details: ['Glute bridge (Fenékbicska)', 'Kagyló gyakorlat', 'Boka mobilizáció'] },
+        { day: 'Hétfő', name: 'Felső mobilitás', details: ['Rotátorköpeny gyakorlatok', 'Plank tartások', 'Gumiszalagos húzások'] },
+        { day: 'Kedd', name: 'Alsó mobilitás', details: ['Glute bridge', 'Kagyló gyakorlat', 'Boka mobilizáció'] },
         { day: 'Szerda', name: 'Pihenőnap', details: ['Pihenés'] },
-        { day: 'Csütörtök', name: 'Felsőtest regeneráció', details: ['SMR hengerezés', 'Nyújtás', 'Könnyű gumiszalagos edzés'] },
-        { day: 'Péntek', name: 'Alsótest regeneráció', details: ['Saját testsúlyos fellépések', 'Egylábas egyensúlyozás'] },
+        { day: 'Csütörtök', name: 'Felső regeneráció', details: ['SMR hengerezés', 'Nyújtás', 'Könnyű gumiszalagos edzés'] },
+        { day: 'Péntek', name: 'Alsó regeneráció', details: ['Saját testsúlyos fellépések', 'Egylábas egyensúlyozás'] },
         { day: 'Szombat', name: 'Séta & Nyújtás', details: ['30 perc könnyű séta'] },
         { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
       ]
@@ -315,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=1200&auto=format&fit=crop',
       description: 'Összetett gyakorlatok és funkcionális elemek ötvözete a jó állóképesség, erő és robbanékonyság fejlesztéséhez.',
       schedule: [
-        { day: 'Hétfő', name: 'Push/Pull kevert', details: ['Fekvenyomás + Evezés szuperszettben: 4x10', 'Kardió intervallum: 15 perc'] },
+        { day: 'Hétfő', name: 'Push/Pull kevert', details: ['Fekvenyomás + Evezés: 4x10', 'Kardió intervallum: 15 perc'] },
         { day: 'Kedd', name: 'Láb & Has', details: ['Lábtolás: 4x12', 'Kettlebell swing: 4x15', 'Core edzés: 3 kör'] },
         { day: 'Szerda', name: 'Pihenőnap', details: ['Könnyű aktivitás'] },
         { day: 'Csütörtök', name: 'Kar & Váll kevert', details: ['Vállból nyomás + Bicepsz: 4x10', 'Oldalemelés: 4x12'] },
@@ -330,10 +330,10 @@ document.addEventListener('DOMContentLoaded', () => {
       image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=1200&auto=format&fit=crop',
       description: 'Normál erősítő edzések kiegészítve prevenciós és rehabilitációs elemekkel az ízületek és szalagok védelme érdekében.',
       schedule: [
-        { day: 'Hétfő', name: 'Felsőtest + Váll rehab', details: ['Rotátorköpeny bemelegítés', 'Kézi súlyzós nyomás: 3x10', 'Facepull: 4x15'] },
-        { day: 'Kedd', name: 'Alsótest + Térd/Csípő rehab', details: ['Csípő aktiváció', 'Könnyű guggolás: 3x10', 'Combtő erősítés: 3x12'] },
+        { day: 'Hétfő', name: 'Váll rehab + Felső', details: ['Rotátorköpeny bemelegítés', 'Kézi súlyzós nyomás: 3x10', 'Facepull: 4x15'] },
+        { day: 'Kedd', name: 'Térd rehab + Alsó', details: ['Csípő aktiváció', 'Könnyű guggolás: 3x10', 'Combtő erősítés: 3x12'] },
         { day: 'Szerda', name: 'Pihenőnap', details: ['Pihenés'] },
-        { day: 'Csütörtök', name: 'Hát & Törzs stabilizáció', details: ['Plank variációk', 'Madár-kutya gyakorlat', 'Húzódzkodás gumipánttal'] },
+        { day: 'Csütörtök', name: 'Hát & Törzs', details: ['Plank variációk', 'Madár-kutya gyakorlat', 'Húzódzkodás gumipánttal'] },
         { day: 'Péntek', name: 'Kardió & Nyújtás', details: ['Evezőpad / Kerékpár: 20 perc', 'Teljes test nyújtás'] },
         { day: 'Szombat', name: 'Pihenőnap', details: ['Pihenés'] },
         { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
@@ -347,30 +347,69 @@ document.addEventListener('DOMContentLoaded', () => {
     const planId = urlParams.get('id') || '1';
     const plan = workoutPlans[planId] || workoutPlans['1'];
 
-    let scheduleHTML = plan.schedule.map(item => `
-      <div class="day-card">
-        <h4>${item.day} <span class="tag">${item.name}</span></h4>
-        <ul>
-          ${item.details.map(d => `<li>${d}</li>`).join('')}
-        </ul>
-      </div>
-    `).join('');
+    // Naptárszerű kártyák generálása
+    let calendarCardsHTML = plan.schedule.map(item => {
+      const isRest = item.name.toLowerCase().includes('pihenő') || item.name.toLowerCase().includes('séta');
+      return `
+        <div style="
+          background: rgba(255, 255, 255, 0.03);
+          border: 1px solid ${isRest ? 'rgba(255, 255, 255, 0.08)' : 'var(--primary, #3b82f6)'};
+          border-radius: 12px;
+          padding: 16px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          min-width: 0;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          opacity: ${isRest ? '0.75' : '1'};
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 8px;">
+            <span style="font-weight: 700; font-size: 1.1rem; color: #fff;">${item.day}</span>
+            <span style="
+              font-size: 0.75rem; 
+              padding: 2px 8px; 
+              border-radius: 20px; 
+              background: ${isRest ? 'rgba(255,255,255,0.1)' : 'rgba(59, 130, 246, 0.2)'};
+              color: ${isRest ? '#9ca3af' : '#60a5fa'};
+              font-weight: 600;
+            ">${isRest ? 'Pihenő' : 'Edzés'}</span>
+          </div>
+
+          <div style="font-size: 0.95rem; font-weight: 600; color: ${isRest ? '#9ca3af' : '#fff'}; margin-bottom: 4px;">
+            ${item.name}
+          </div>
+
+          <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #d1d5db; display: flex; flex-direction: column; gap: 6px;">
+            ${item.details.map(d => `
+              <li style="display: flex; align-items: flex-start; gap: 6px;">
+                <span style="color: var(--primary, #3b82f6); font-weight: bold;">•</span>
+                <span>${d}</span>
+              </li>
+            `).join('')}
+          </ul>
+        </div>
+      `;
+    }).join('');
 
     detailContainer.innerHTML = `
       <img src="${plan.image}" class="workout-banner" alt="${plan.title}">
       <div class="hero-box">
         <h2>${plan.title}</h2>
-        <p style="color: var(--primary); font-weight: 500; margin-bottom: 8px;">${plan.subtitle}</p>
+        <p style="color: var(--primary, #3b82f6); font-weight: 500; margin-bottom: 8px;">${plan.subtitle}</p>
         <p>${plan.description}</p>
         <button class="btn-primary" style="width: 100%; margin-top: 12px;">
           <i data-lucide="play-circle"></i> Terv Indítása & Követése
         </button>
       </div>
 
-      <section style="margin-top: 24px;">
-        <div class="section-header">Heti Beosztási Javaslat</div>
-        <div class="weekly-schedule">
-          ${scheduleHTML}
+      <section style="margin-top: 32px;">
+        <div class="section-header" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Heti Beosztás </div>
+        <div style="
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+          gap: 16px;
+        ">
+          ${calendarCardsHTML}
         </div>
       </section>
     `;
