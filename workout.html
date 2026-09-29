@@ -55,11 +55,11 @@
       <main>
         <section class="hero-box">
           <h2>Edzéstervek & Napló</h2>
-          <p>Kövesd nyomon a napi edzéseidet, vagy indíts el egy új edzéstervet a fejlődésed érdekében.</p>
+          <p>Válassz a meglévő edzéstervek közül vagy készíts egy sajátot</p>
           
           <div class="action-row">
             <button class="btn-primary">
-              <i data-lucide="play"></i> Edzés indítása
+              <i data-lucide="play"></i> Egyéni edzés indítása
             </button>
             <button class="btn-secondary">
               <i data-lucide="plus"></i> Új terv
@@ -68,31 +68,96 @@
         </section>
 
         <section>
-          <div class="section-header">Közelgő & Aktív edzések</div>
-          <div class="group-list">
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Felsőtest - A nap</h3>
-                <p>Mell, Váll, Tricepsz • 45 perc</p>
-              </div>
-              <button class="btn-join">Indítás</button>
-            </div>
+          <div class="section-header">Választható edzéstervek</div>
+          <div class="workout-cards-grid">
+    
+    <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=600&auto=format&fit=crop"  class="card-image">
+        
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Push - Pull - Leg</h3>
+        <p class="card-subtitle">Toló - Húzó - Láb napok</p>
+        <a href="workout-detail.html?id=1" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
 
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Alsótest - B nap</h3>
-                <p>Láb, Has • 50 perc</p>
-              </div>
-              <button class="btn-join">Indítás</button>
-            </div>
+    <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Bro split</h3>
+        <p class="card-subtitle">Mell - Hát - Váll - Kar - Láb napok</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Upper - Lower</h3>
+        <p class="card-subtitle">Alsó - Felsőtest napok</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
+     <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Alsó - Felsőtest csak rehab</h3>
+        <p class="card-subtitle">Teljes rehabilitációs edzésterv</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
 
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Kardió & Core</h3>
-                <p>Futópad, Plánk • 30 perc</p>
-              </div>
-              <button class="btn-join">Indítás</button>
-            </div>
+     <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Full body</h3>
+        <p class="card-subtitle">Teljes test napok</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
+  <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Mixed</h3>
+        <p class="card-subtitle">Toló - Húzó gyakorlatok keverve, Láb</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="workout-card">
+      <div class="card-image-wrapper">
+        <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop"  class="card-image">
+      </div>
+      <div class="card-content">
+        <h3 class="card-title">Rehab - Edzés</h3>
+        <p class="card-subtitle">Rehabilitációs edzés keverve normális edzéssel</p>
+        <a href="workout-detail.html?id=2" class="btn-primary card-btn">
+          Edzésterv indítása <i data-lucide="chevron-right"></i>
+        </a>
+      </div>
+    </div>
           </div>
         </section>
       </main>
