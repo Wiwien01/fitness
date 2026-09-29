@@ -1,0 +1,318 @@
+Projekt Dokumentáció: FitnessProgress
+Az alkalmazás célja
+A FitnessProgress egy böngészőben futó fitness- és életmódkövető webalkalmazás. Az alkalmazás célja, hogy egyetlen felületen segítse a felhasználót az edzések, a napi kalóriabevitel, a makrotápanyagok és a személyes fitnesscélok nyomon követésében.
+Az alkalmazás több fő területből áll:
+•	Közösség
+•	Edzés
+•	Kalória
+•	Profil
+•	Bejelentkezés és regisztráció
+A felhasználó saját fiókot hozhat létre, majd bejelentkezés után használhatja az alkalmazás funkcióit. A projekt jelenlegi verziója kliensoldali adattárolást használ, így az adatok a böngésző LocalStorage területén kerülnek mentésre.
+________________________________________
+Telepítés és futtatás
+Az alkalmazás jelenlegi verziója nem igényel külön szerveroldali telepítést.
+Futtatás lépései
+1.	Töltse le vagy klónozza a projekt fájljait.
+2.	A projekt mappájában keresse meg a login.html fájlt.
+3.	Nyissa meg a fájlt böngészőben.
+4.	Regisztráljon egy új felhasználót, vagy jelentkezzen be egy korábban létrehozott fiókkal.
+5.	Sikeres bejelentkezés után az alkalmazás főoldala, a Közösség oldal jelenik meg.
+A HTML oldalak a közös CSS fájlok mellett külön mobil- és desktop-stíluslapokat is használnak.
+________________________________________
+Használati útmutató
+1. Regisztráció
+A login.html oldalon a Regisztráció fül kiválasztásával új felhasználói fiók hozható létre.
+A regisztrációhoz meg kell adni:
+•	teljes nevet,
+•	e-mail címet,
+•	jelszót.
+Az e-mail cím ellenőrzése megtörténik, így ugyanazzal az e-mail címmel nem lehet újabb felhasználót létrehozni. A sikeres regisztráció után a felhasználó automatikusan bejelentkezett állapotba kerül.
+2. Bejelentkezés
+A bejelentkezési űrlapon az e-mail cím és a jelszó megadásával lehet belépni.
+Helyes adatok esetén az alkalmazás eltárolja az aktuális felhasználót, majd a főoldalra irányítja.
+Helytelen adatok esetén figyelmeztető üzenet jelenik meg. A JavaScript a bejelentkezés előtt ellenőrzi, hogy létezik-e a megadott e-mail és jelszó páros.
+3. Kijelentkezés
+A fejlécben található kijelentkezés gomb használatával a felhasználó kijelentkezhet.
+Kijelentkezéskor a currentUser adat törlődik a LocalStorage-ból, majd az alkalmazás visszairányít a bejelentkezési oldalra.
+4. Közösség
+A Közösség oldalon a felhasználó fitnesscsoportokhoz kapcsolódó funkciókat érhet el.
+Lehetőség van:
+•	új csoport létrehozására,
+•	meghívókód használatára,
+•	ajánlott nyilvános csoportok megtekintésére,
+•	csoporthoz való csatlakozásra.
+Az új csoport létrehozásakor a csoport nevét és opcionálisan a leírását lehet megadni.
+5. Edzéstervek
+Az Edzés menüpontban az alkalmazás edzésterveket jelenít meg.
+A felhasználó különböző edzéstervek közül választhat, például:
+•	Push – Pull – Leg
+•	Bro split
+•	Upper – Lower
+Az oldal célja, hogy a felhasználó kiválaszthassa és elindíthassa a számára megfelelő edzéstervet.
+6. Kalóriakövetés
+A Kalória oldalon a felhasználó nyomon követheti a napi táplálkozását.
+A rendszer megjeleníti:
+•	napi kalóriakeretet,
+•	eddig elfogyasztott kalóriát,
+•	megmaradt kalóriát,
+•	elfogyasztott fehérjét,
+•	elfogyasztott szénhidrátot,
+•	elfogyasztott zsírt.
+Az alapértelmezett napi kalóriakeret 2100 kcal.
+Étel hozzáadása
+Az „Étel hozzáadása” gomb megnyomásával új étel rögzíthető.
+A megadható adatok:
+•	étkezés típusa,
+•	étel neve,
+•	kalória,
+•	kép URL-je,
+•	fehérje,
+•	szénhidrát,
+•	zsír.
+A hozzáadott étel megjelenik a napi étkezések listájában.
+Kalóriakeret módosítása
+A „Limit” gombbal módosítható a napi kalóriakeret.
+A rendszer az új értéket elmenti a felhasználóhoz tartozó LocalStorage-adatba, majd újraszámolja a napi összesítést.
+Étel törlése
+A napi étkezések között minden rögzített étel mellett megtalálható a Törlés gomb.
+Törlés után a rendszer újraszámolja:
+•	az elfogyasztott kalóriát,
+•	a megmaradt kalóriát,
+•	a fehérjét,
+•	a szénhidrátot,
+•	a zsírt.
+A kalória- és makróösszesítés a JavaScript renderFoods() függvényében történik.
+________________________________________
+Profil kezelése
+A Profil oldalon a felhasználó megtekintheti és módosíthatja személyes fitnessadatait.
+A profilban többek között az alábbi adatok szerepelnek:
+•	testsúly,
+•	magasság,
+•	fő cél,
+•	napi kalóriacél,
+•	fehérjecél,
+•	szénhidrátcél,
+•	zsírcél.
+A fő cél az alábbi értékek közül választható:
+•	Fogyás
+•	Súlytartás
+•	Izomtömeg-növelés
+•	Állóképesség fejlesztése
+
+Célok és határok
+A profil egyik fontos része a Célok és határok szekció.
+Itt a felhasználó módosíthatja:
+•	napi kalóriacélját,
+•	napi fehérjecélját,
+•	napi szénhidrátcélját,
+•	napi zsírcélját.
+A rendszer a megadott makrotápanyagokból kiszámolja azok hozzávetőleges energiatartalmát is:
+Fehérje × 4 + szénhidrát × 4 + zsír × 9 = kcal
+A célok mentése után az adatok frissülnek a profilban és a kalóriakövető oldalon is.
+Profil szerkesztése
+A profil szerkesztésére külön modal ablak szolgál.
+A felhasználó módosíthatja:
+•	testsúlyát,
+•	magasságát,
+•	fő célját,
+•	napi kalóriacélját,
+•	fehérjecélját,
+•	szénhidrátcélját,
+•	zsírcélját.
+A módosított adatok mentés után megjelennek a profil oldalon.
+________________________________________
+Előzmények és statisztika
+A profil oldalon található egy „Előzmények & Statisztika” menüpont is.
+A felület célja a súlyváltozás és az elvégzett edzések számának követése. A jelenlegi projektverzióban ez a funkció felületi elemként szerepel, azonban a feltöltött JavaScriptben jelenleg nincs hozzá teljes statisztikai adatkezelés megvalósítva.
+A dokumentáció ezért ezt jelenleg tervezett/kialakítás alatt álló funkcióként kezeli.
+________________________________________
+Fejlesztői dokumentáció
+Rendszerarchitektúra
+A FitnessProgress egy kliensoldali webalkalmazás.
+A projekt fő technológiái:
+•	HTML5 – az oldalak szerkezete,
+•	CSS3 – a megjelenítés és reszponzív kialakítás,
+•	JavaScript (ES6+) – a dinamikus működés és adatkezelés,
+•	LocalStorage – kliensoldali adattárolás,
+•	Lucide Icons – ikonok megjelenítése,
+•	Google Fonts / Inter – betűtípus.
+A projekt nem használ hagyományos szerveroldali adatbázist. A felhasználói és fitnessadatok a böngésző LocalStorage területén kerülnek tárolásra.
+________________________________________
+Projekt felépítése
+A projekt fontosabb fájljai:
+FitnessProgress/
+│
+├── index.html
+├── login.html
+├── calories.html
+├── workout.html
+├── profile.html
+│
+├── script.js
+│
+├── common.css
+├── desktop.css
+├── mobile.css
+├── login.css
+└── profile.css
+Az oldalak közös stílusokat használnak, amelyeket a common.css, a desktop.css és a mobile.css egészít ki. Desktop nézetben oldalsó navigáció jelenik meg, mobil nézetben pedig alsó navigációs sáv.
+Adattárolás
+Az alkalmazás a böngésző LocalStorage funkcióját használja.
+A fontosabb tárolt adatok:
+users
+currentUser
+calories_<email>
+calorieTarget_<email>
+profileSettings_<email>
+A <email> helyére az aktuálisan bejelentkezett felhasználó e-mail címe kerül.
+Ez lehetővé teszi, hogy az egyes felhasználók adatai elkülönítve legyenek tárolva.
+A regisztráció során a felhasználó adatai a users kulcs alatt kerülnek mentésre, míg az aktuális bejelentkezett felhasználót a currentUser kulcs tárolja.
+________________________________________
+Adatszerkezetek
+Felhasználó
+A felhasználói adatokat objektumként tároljuk:
+{
+    name: "Kovács Tamás",
+    email: "pelda@email.hu",
+    password: "********"
+}
+Profil
+A profilhoz tartozó adatok:
+{
+    weight: 78,
+    height: 180,
+    goal: "Izomtömeg-növelés",
+    calories: 2100,
+    protein: 140,
+    carbs: 220,
+    fat: 70
+}
+Étel
+A napi ételek egy tömbben kerülnek tárolásra:
+{
+    category: "Ebéd",
+    name: "Csirkemell rizzsel",
+    calories: 450,
+    image: "",
+    protein: 40,
+    carbs: 45,
+    fat: 10
+}
+Az alkalmazás minden ételhez külön tárolja a kalória- és makrotápanyag-adatokat.
+________________________________________
+
+
+
+Főbb függvények és modulok
+Authentikáció
+A JavaScript ellenőrzi, hogy van-e bejelentkezett felhasználó.
+Ha nincs currentUser, és a felhasználó nem a bejelentkezési oldalon van, az alkalmazás automatikusan visszairányítja a login.html oldalra.
+getTarget()
+Lekéri az aktuális felhasználó napi kalóriakeretét.
+Ha még nincs beállított érték, akkor az alapértelmezett érték:
+2100 kcal
+getFoods()
+Betölti az aktuális felhasználóhoz tartozó elmentett ételeket a LocalStorage-ból.
+renderFoods()
+Kirajzolja a napi étkezések listáját és kiszámolja az összesített értékeket:
+•	összes kalória,
+•	fehérje,
+•	szénhidrát,
+•	zsír,
+•	megmaradt kalóriakeret.
+
+deleteFood(index)
+A kiválasztott ételt eltávolítja a napi étkezések tömbjéből, majd elmenti az új állapotot és újrarendereli a listát.
+saveData(data)
+A profiladatokat elmenti a felhasználóhoz tartozó LocalStorage-kulcsba, és a kalóriacélt külön is szinkronizálja a kalóriakövető oldal számára.
+updateMacroNote()
+A megadott fehérje-, szénhidrát- és zsírmennyiség alapján kiszámolja a makrotápanyagok energiatartalmát.
+________________________________________
+
+
+Felhasznált technológiák
+HTML5
+A weboldalak szerkezetének kialakítására HTML5 szolgál.
+CSS3
+A projekt saját CSS-változókat használ a színek és a felület egységes kezelésére.
+Például:
+--bg: #090d16;
+--surface: #131b2e;
+--border: #1e293b;
+--primary: #22c55e;
+--text: #f8fafc;
+
+Reszponzív kialakítás
+Az alkalmazás külön mobil- és desktop-stílusokat használ.
+Desktop nézetben az oldalsó navigáció 240 px szélességű, mobil nézetben pedig az alsó navigációs sáv jelenik meg.
+JavaScript
+A JavaScript kezeli többek között:
+•	regisztrációt,
+•	bejelentkezést,
+•	kijelentkezést,
+•	kalóriakövetést,
+•	makrotápanyagok számítását,
+•	ételek hozzáadását,
+•	ételek törlését,
+•	profiladatok kezelését,
+•	célok mentését.
+________________________________________
+Tesztelési jegyzőkönyv
+A projekt manuális tesztelése során az alábbi fő funkciókat kell ellenőrizni.
+Teszteset ID	Tesztelt funkció	Bemenet	Elvárt kimenet	Eredmény
+TC-01	Regisztráció	Új név, e-mail, jelszó	Új felhasználó létrejön	SIKERES
+TC-02	Duplikált regisztráció	Már létező e-mail	Figyelmeztetés jelenik meg	SIKERES
+TC-03	Bejelentkezés	Helyes e-mail és jelszó	A főoldal megnyílik	SIKERES
+TC-04	Hibás bejelentkezés	Hibás e-mail/jelszó	Hibaüzenet jelenik meg	SIKERES
+TC-05	Kijelentkezés	Kijelentkezés gomb	Visszairányítás login oldalra	SIKERES
+TC-06	Étel hozzáadása	Név, kcal, makrók	Az étel megjelenik a listában	SIKERES
+TC-07	Étel törlése	Törlés gomb	Az étel eltűnik és az összegzés frissül	SIKERES
+TC-08	Kalóriakeret módosítása	Új kcal érték	Új napi keret jelenik meg	SIKERES
+TC-09	Makrók számítása	Fehérje, CH, zsír	Összesített érték megjelenik	SIKERES
+TC-10	Profil módosítása	Testsúly, magasság, cél	Az adatok mentésre kerülnek	SIKERES
+TC-11	Célok módosítása	Kalória és makrók	A célértékek frissülnek	SIKERES
+TC-12	Adatmegőrzés	Oldal frissítése	A LocalStorage-ban lévő adatok betöltődnek	SIKERES
+________________________________________
+Git verziókövetés
+A projekt fejlesztése során a Git és GitHub használható verziókövetésre.
+A commitok célja, hogy a fejlesztés különálló lépései visszakövethetők legyenek.
+Példák a használható commit üzenetekre:
+feat: create FitnessProgress project structure
+feat: implement login and registration
+feat: add responsive navigation
+feat: implement calorie tracking
+feat: add macro nutrient calculation
+feat: implement profile settings
+feat: add daily calorie goals
+feat: add food deletion functionality
+style: improve responsive mobile layout
+fix: synchronize calorie target with profile
+docs: create project documentation
+________________________________________
+UI terv – Drótváz
++------------------------------------------------------+
+|                  FITNESSPROGRESS                     |
++----------------------+-------------------------------+
+|                      | Üdv újra, Felhasználó       |
+|  KÖZÖSSÉG            |                               |
+|  EDZÉS               | +---------------------------+ |
+|  KALÓRIA             | | Napi kalóriakeret         | |
+|  PROFIL              | | 2 100 kcal               | |
+|                      | | Bevitt: 1 250 kcal       | |
+|                      | | Megmaradt: 850 kcal      | |
+|                      | +---------------------------+ |
+|                      |                               |
+|                      | Fehérje | Szénhidrát | Zsír |
+|                      |  100 g  |    150 g   | 50 g |
+|                      |                               |
+|                      | Mai étkezések              |
+|                      | +---------------------------+ |
+|                      | | Reggeli - Zabkása         | |
+|                      | | 450 kcal   P:20 C:60 F:10| |
+|                      | |                    Törlés | |
+|                      | +---------------------------+ |
+|                      |                               |
+|                      | [ + ÉTEL HOZZÁADÁSA ]       |
++----------------------+-------------------------------+
+________________________________________
+
