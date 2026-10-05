@@ -1,122 +1,556 @@
-<!-- profile.html -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profil - FitnessProgress</title>
-  
+
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <link rel="stylesheet" href="common.css">
   <link rel="stylesheet" href="mobile.css" media="(max-width: 767px)">
   <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
+  <link rel="stylesheet" href="profile.css">
 </head>
 <body>
   <header>
-  <div class="user-profile">
-    <div class="avatar">--</div>
-    <div class="user-info">
-      <span class="greeting">Üdv újra,</span>
-      <span class="user-name">Felhasználó</span>
+    <div class="user-profile">
+      <div class="avatar top-avatar">--</div>
+      <div class="user-info">
+        <span class="greeting">Üdv újra,</span>
+        <span class="user-name top-user-name">Felhasználó</span>
+      </div>
     </div>
-  </div>
-  
-  <div style="display: flex; gap: 8px;">
-    <button class="icon-btn" aria-label="Értesítések">
-      <i data-lucide="bell"></i>
-    </button>
-    <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
-      <i data-lucide="log-out"></i>
-    </button>
-  </div>
-</header>
+    <div class="header-actions">
+      <button class="icon-btn notification-btn" aria-label="Értesítések" title="Értesítések">
+        <i data-lucide="bell"></i>
+        <span class="notification-dot hidden"></span>
+      </button>
+      <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </header>
 
   <div class="app-container">
     <nav class="navigation">
       <div class="brand">FitnessProgress</div>
       <div class="nav-links">
-        <a href="index.html" class="nav-link">
-          <i data-lucide="users"></i>
-          <span>Közösség</span>
-        </a>
-        <a href="workout.html" class="nav-link">
-          <i data-lucide="dumbbell"></i>
-          <span>Edzés</span>
-        </a>
-        <a href="calories.html" class="nav-link">
-          <i data-lucide="pie-chart"></i>
-          <span>Kalória</span>
-        </a>
-        <a href="profile.html" class="nav-link active">
-          <i data-lucide="user"></i>
-          <span>Profil</span>
-        </a>
+        <a href="index.html" class="nav-link"><i data-lucide="users"></i><span>Közösség</span></a>
+        <a href="workout.html" class="nav-link"><i data-lucide="dumbbell"></i><span>Edzés</span></a>
+        <a href="calories.html" class="nav-link"><i data-lucide="pie-chart"></i><span>Kalória</span></a>
+        <a href="profile.html" class="nav-link active"><i data-lucide="user"></i><span>Profil</span></a>
       </div>
     </nav>
 
     <div class="main-wrapper">
-      <header>
+      <header class="page-header">
         <div class="user-profile">
-          <div class="avatar">KT</div>
+          <div class="avatar profile-header-avatar">--</div>
           <div class="user-info">
             <span class="greeting">Fiók beállítások</span>
-            <span class="user-name">Kovács Tamás</span>
+            <span class="user-name profile-header-name">Felhasználó</span>
           </div>
         </div>
-        <button class="icon-btn" aria-label="Értesítések">
+        <button class="icon-btn notification-btn" aria-label="Értesítések" title="Értesítések">
           <i data-lucide="bell"></i>
         </button>
       </header>
 
-      <main>
-        <section class="hero-box">
-          <h2>Kovács Tamás</h2>
-          <p>Súly: 78 kg | Magasság: 180 cm | Cél: Izomtömeg-növelés</p>
-          
-          <div class="action-row">
-            <button class="btn-primary">
-              <i data-lucide="edit-3"></i> Profil szerkesztése
-            </button>
-            <button class="btn-secondary">
-              <i data-lucide="settings"></i> Beállítások
-            </button>
+      <main class="profile-main">
+        <section class="profile-hero">
+          <div class="profile-hero-main">
+            <div class="profile-avatar-large" id="profileAvatar">--</div>
+            <div class="profile-identity">
+              <div class="identity-line">
+                <h1 id="profileName">Felhasználó</h1>
+                <span class="goal-badge" id="profileGoalBadge">Cél beállítása</span>
+              </div>
+              <p id="profileEmail">felhasznalo@email.hu</p>
+              <div class="profile-meta">
+                <span><i data-lucide="calendar-days"></i><span id="memberSince">Tag</span></span>
+                <span><i data-lucide="target"></i><span id="heroGoal">Még nincs beállított cél</span></span>
+              </div>
+            </div>
+          </div>
+          <div class="hero-actions">
+            <button class="btn-primary" id="editProfileBtn"><i data-lucide="pencil"></i> Profil szerkesztése</button>
+            <button class="btn-secondary" id="settingsBtn"><i data-lucide="settings"></i> Beállítások</button>
           </div>
         </section>
 
-        <section>
-          <div class="section-header">Személyes adatok & Statisztikák</div>
-          <div class="group-list">
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Célok és határok</h3>
-                <p>Napi kalóriacél, makrotápanyagok beállítása</p>
-              </div>
-              <button class="btn-join">Megtekintés</button>
-            </div>
+        <section class="stats-grid" aria-label="Profil statisztikák">
+          <article class="stat-card">
+            <div class="stat-icon"><i data-lucide="scale"></i></div>
+            <div><span class="stat-label">Testsúly</span><strong id="statWeight">--</strong><small id="weightChange">Nincs korábbi adat</small></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon"><i data-lucide="ruler"></i></div>
+            <div><span class="stat-label">Magasság</span><strong id="statHeight">--</strong><small id="statBmi">BMI: --</small></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon"><i data-lucide="flame"></i></div>
+            <div><span class="stat-label">Napi keret</span><strong id="statCalories">--</strong><small id="statCaloriesUsed">Mai bevitel: 0 kcal</small></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon"><i data-lucide="dumbbell"></i></div>
+            <div><span class="stat-label">Heti cél</span><strong id="statWorkouts">0 edzés</strong><small id="statWorkoutGoal">Cél: 0 / hét</small></div>
+          </article>
+        </section>
 
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Előzmények & Statisztika</h3>
-                <p>Súlyváltozás, elvégzett edzések száma</p>
-              </div>
-              <button class="btn-join">Megtekintés</button>
-            </div>
+        <div class="profile-tabs" role="tablist" aria-label="Profil részei">
+          <button class="profile-tab active" role="tab" aria-selected="true" data-tab="overview"><i data-lucide="layout-dashboard"></i> Áttekintés</button>
+          <button class="profile-tab" role="tab" aria-selected="false" data-tab="goals"><i data-lucide="target"></i> Céljaim</button>
+          <button class="profile-tab" role="tab" aria-selected="false" data-tab="history"><i data-lucide="history"></i> Előzmények</button>
+          <button class="profile-tab" role="tab" aria-selected="false" data-tab="security"><i data-lucide="shield-check"></i> Biztonság</button>
+        </div>
 
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>Fiók biztonság</h3>
-                <p>Jelszó módosítása, 2FA és csatlakoztatott eszközök</p>
+        <section class="tab-panel active" id="tab-overview" role="tabpanel">
+          <div class="content-grid">
+            <article class="profile-card">
+              <div class="card-heading"><div><span class="eyebrow">Személyes adatok</span><h2>Rólad</h2></div><button class="text-btn" data-open-edit> Szerkesztés <i data-lucide="arrow-up-right"></i></button></div>
+              <div class="details-grid">
+                <div><span>Teljes név</span><strong id="detailName">--</strong></div>
+                <div><span>E-mail</span><strong id="detailEmail">--</strong></div>
+                <div><span>Testsúly</span><strong id="detailWeight">--</strong></div>
+                <div><span>Magasság</span><strong id="detailHeight">--</strong></div>
+                <div><span>Edzettségi cél</span><strong id="detailGoal">--</strong></div>
+                <div><span>Heti edzéscél</span><strong id="detailWorkoutGoal">--</strong></div>
               </div>
-              <button class="btn-join">Kezelés</button>
+            </article>
+
+            <article class="profile-card progress-card">
+              <div class="card-heading"><div><span class="eyebrow">Haladás</span><h2>A célod felé</h2></div><i class="heading-icon" data-lucide="trending-up"></i></div>
+              <div class="progress-summary"><strong id="progressText">Állíts be céltestsúlyt</strong><span id="progressPercent">0%</span></div>
+              <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+              <p id="progressDescription">A testsúlycél beállítása után itt követheted a változást.</p>
+              <button class="btn-secondary full-btn" data-tab-target="goals"><i data-lucide="target"></i> Célok kezelése</button>
+            </article>
+          </div>
+
+          <article class="profile-card activity-card">
+            <div class="card-heading"><div><span class="eyebrow">Aktivitás</span><h2>Mai állapot</h2></div><button class="text-btn" data-tab-target="history">Teljes előzmény <i data-lucide="arrow-right"></i></button></div>
+            <div class="activity-row">
+              <div class="activity-item"><div class="activity-icon"><i data-lucide="utensils"></i></div><div><span>Kalória</span><strong id="activityCalories">0 kcal</strong><small id="activityCaloriesSub">a napi keretből</small></div></div>
+              <div class="activity-item"><div class="activity-icon"><i data-lucide="dumbbell"></i></div><div><span>Edzések</span><strong id="activityWorkouts">0</strong><small>rögzített edzés</small></div></div>
+              <div class="activity-item"><div class="activity-icon"><i data-lucide="scale"></i></div><div><span>Testsúly</span><strong id="activityWeight">--</strong><small>legutóbbi mérés</small></div></div>
             </div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-goals" role="tabpanel" hidden>
+          <article class="profile-card">
+            <div class="card-heading"><div><span class="eyebrow">Személyre szabás</span><h2>Célok és határok</h2></div><button class="btn-secondary" id="editGoalsBtn"><i data-lucide="pencil"></i> Célok szerkesztése</button></div>
+            <div class="goal-grid">
+              <div class="goal-box"><span>Napi kalóriakeret</span><strong id="goalCalories">--</strong><small>kcal / nap</small></div>
+              <div class="goal-box"><span>Céltestsúly</span><strong id="goalWeight">--</strong><small>kg</small></div>
+              <div class="goal-box"><span>Heti edzés</span><strong id="goalWorkout">--</strong><small>alkalom / hét</small></div>
+              <div class="goal-box"><span>Fő cél</span><strong id="goalType">--</strong><small>beállított cél</small></div>
+            </div>
+          </article>
+
+          <article class="profile-card goal-tip-card">
+            <div class="tip-icon"><i data-lucide="lightbulb"></i></div>
+            <div><h3>Legyen követhető a célod</h3><p>Érdemes olyan heti edzéscélt választani, amit hosszú távon is tudsz tartani. A kalóriakeretedet és a céltestsúlyodat bármikor módosíthatod.</p></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" id="tab-history" role="tabpanel" hidden>
+          <div class="content-grid">
+            <article class="profile-card">
+              <div class="card-heading"><div><span class="eyebrow">Testsúly</span><h2>Mérési előzmények</h2></div><button class="btn-primary" id="addWeightBtn"><i data-lucide="plus"></i> Új mérés</button></div>
+              <div class="history-list" id="weightHistoryList"></div>
+            </article>
+            <article class="profile-card">
+              <div class="card-heading"><div><span class="eyebrow">Edzésnapló</span><h2>Aktivitási előzmények</h2></div><i class="heading-icon" data-lucide="activity"></i></div>
+              <div class="history-list" id="workoutHistoryList"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" id="tab-security" role="tabpanel" hidden>
+          <div class="security-list">
+            <article class="security-item">
+              <div class="security-item-icon"><i data-lucide="mail"></i></div>
+              <div class="security-copy"><h3>E-mail cím</h3><p id="securityEmail">--</p><small>Erre a címre kapcsolódik a fiókod.</small></div>
+              <button class="btn-secondary" id="changeEmailBtn">Módosítás</button>
+            </article>
+            <article class="security-item">
+              <div class="security-item-icon"><i data-lucide="key-round"></i></div>
+              <div class="security-copy"><h3>Jelszó</h3><p>••••••••••</p><small>Biztonságosabb, ha időnként frissíted.</small></div>
+              <button class="btn-secondary" id="changePasswordBtn">Jelszó módosítása</button>
+            </article>
+            <article class="security-item">
+              <div class="security-item-icon"><i data-lucide="smartphone"></i></div>
+              <div class="security-copy"><h3>Bejelentkezési értesítések</h3><p>Értesítés új bejelentkezéskor</p><small>Az állapotod ezen az eszközön kerül mentésre.</small></div>
+              <label class="switch"><input type="checkbox" id="loginNotifyToggle"><span></span></label>
+            </article>
+            <article class="security-item danger-item">
+              <div class="security-item-icon"><i data-lucide="trash-2"></i></div>
+              <div class="security-copy"><h3>Fiók törlése</h3><p>Az összes helyi profiladat eltávolítása</p><small>Ez a művelet nem vonható vissza.</small></div>
+              <button class="danger-btn" id="deleteAccountBtn">Fiók törlése</button>
+            </article>
           </div>
         </section>
       </main>
     </div>
   </div>
 
+  <!-- Profil szerkesztése -->
+  <div class="modal-backdrop" id="profileModal">
+    <div class="modal-panel profile-modal-panel">
+      <div class="modal-head"><div><span class="eyebrow">Profil</span><h3>Személyes adatok</h3></div><button class="icon-btn close-modal" data-close-modal="profileModal"><i data-lucide="x"></i></button></div>
+      <form id="profileForm">
+        <div class="form-two-col">
+          <div class="input-field"><label for="profile-name-input">Teljes név</label><input id="profile-name-input" type="text" required></div>
+          <div class="input-field"><label for="profile-email-input">E-mail cím</label><input id="profile-email-input" type="email" required></div>
+        </div>
+        <div class="form-two-col">
+          <div class="input-field"><label for="profile-weight-input">Testsúly (kg)</label><input id="profile-weight-input" type="number" min="20" max="300" step="0.1" required></div>
+          <div class="input-field"><label for="profile-height-input">Magasság (cm)</label><input id="profile-height-input" type="number" min="100" max="250" step="1" required></div>
+        </div>
+        <div class="form-two-col">
+          <div class="input-field"><label for="profile-goal-input">Fő cél</label><select id="profile-goal-input"><option>Izomtömeg-növelés</option><option>Testsúlycsökkentés</option><option>Állóképesség fejlesztése</option><option>Általános fittség</option><option>Erőnövelés</option></select></div>
+          <div class="input-field"><label for="profile-target-weight-input">Céltestsúly (kg)</label><input id="profile-target-weight-input" type="number" min="20" max="300" step="0.1" required></div>
+        </div>
+        <div class="input-field"><label for="profile-workout-goal-input">Heti edzéscél</label><input id="profile-workout-goal-input" type="number" min="0" max="14" step="1" required></div>
+        <div class="input-field"><label for="profile-calorie-input">Napi kalóriakeret (kcal)</label><input id="profile-calorie-input" type="number" min="500" max="10000" step="50" required></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary close-modal" data-close-modal="profileModal">Mégse</button><button type="submit" class="btn-primary">Mentés <i data-lucide="check"></i></button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Beállítások -->
+  <div class="modal-backdrop" id="settingsModal">
+    <div class="modal-panel">
+      <div class="modal-head"><div><span class="eyebrow">Fiók</span><h3>Beállítások</h3></div><button class="icon-btn close-modal" data-close-modal="settingsModal"><i data-lucide="x"></i></button></div>
+      <div class="settings-options">
+        <label class="setting-row"><div><strong>Értesítések</strong><span>Fontos aktivitásokról és bejelentkezésekről</span></div><input type="checkbox" class="setting-checkbox" id="settingsNotifications"></label>
+        <label class="setting-row"><div><strong>Edzés emlékeztető</strong><span>Emlékeztető a heti edzéscélodhoz</span></div><input type="checkbox" class="setting-checkbox" id="settingsWorkoutReminder"></label>
+        <label class="setting-row"><div><strong>Profil láthatósága</strong><span>A profilod alapadatai megjelenhetnek a közösségben</span></div><input type="checkbox" class="setting-checkbox" id="settingsPublicProfile"></label>
+      </div>
+      <button class="btn-secondary full-btn close-modal" data-close-modal="settingsModal">Bezárás</button>
+    </div>
+  </div>
+
+  <!-- Jelszó -->
+  <div class="modal-backdrop" id="passwordModal">
+    <div class="modal-panel">
+      <div class="modal-head"><div><span class="eyebrow">Biztonság</span><h3>Jelszó módosítása</h3></div><button class="icon-btn close-modal" data-close-modal="passwordModal"><i data-lucide="x"></i></button></div>
+      <form id="passwordForm">
+        <div class="input-field"><label for="current-password">Jelenlegi jelszó</label><input id="current-password" type="password" required></div>
+        <div class="input-field"><label for="new-password">Új jelszó</label><input id="new-password" type="password" minlength="8" required></div>
+        <div class="input-field"><label for="confirm-password">Új jelszó újra</label><input id="confirm-password" type="password" minlength="8" required></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary close-modal" data-close-modal="passwordModal">Mégse</button><button type="submit" class="btn-primary">Jelszó mentése</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- E-mail -->
+  <div class="modal-backdrop" id="emailModal">
+    <div class="modal-panel">
+      <div class="modal-head"><div><span class="eyebrow">Fiók</span><h3>E-mail módosítása</h3></div><button class="icon-btn close-modal" data-close-modal="emailModal"><i data-lucide="x"></i></button></div>
+      <form id="emailForm">
+        <div class="input-field"><label for="new-email">Új e-mail cím</label><input id="new-email" type="email" required></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary close-modal" data-close-modal="emailModal">Mégse</button><button type="submit" class="btn-primary">E-mail mentése</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mérlegelés -->
+  <div class="modal-backdrop" id="weightModal">
+    <div class="modal-panel">
+      <div class="modal-head"><div><span class="eyebrow">Haladás</span><h3>Új testsúly mérés</h3></div><button class="icon-btn close-modal" data-close-modal="weightModal"><i data-lucide="x"></i></button></div>
+      <form id="weightForm">
+        <div class="input-field"><label for="new-weight">Testsúly (kg)</label><input id="new-weight" type="number" min="20" max="300" step="0.1" required></div>
+        <div class="input-field"><label for="weight-date">Dátum</label><input id="weight-date" type="date" required></div>
+        <div class="modal-actions"><button type="button" class="btn-secondary close-modal" data-close-modal="weightModal">Mégse</button><button type="submit" class="btn-primary">Mérés mentése</button></div>
+      </form>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><i data-lucide="check-circle-2"></i><span></span></div>
+
   <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const user = JSON.parse(localStorage.getItem('currentUser'));
+      if (!user) return;
+
+      const profileKey = `profile_${user.email}`;
+      const calorieKey = `calorieTarget_${user.email}`;
+      const foodKey = `calories_${user.email}`;
+      const weightKey = `weightHistory_${user.email}`;
+      const workoutKey = `workoutHistory_${user.email}`;
+      const settingsKey = `profileSettings_${user.email}`;
+
+      const defaults = {
+        name: user.name || 'Felhasználó', email: user.email || '', weight: 78, height: 180,
+        goal: 'Izomtömeg-növelés', targetWeight: 75, workoutGoal: 3, calories: 2100,
+        createdAt: new Date().toISOString()
+      };
+      let profile = { ...defaults, ...(JSON.parse(localStorage.getItem(profileKey)) || {}) };
+      let weights = JSON.parse(localStorage.getItem(weightKey)) || [];
+      let settings = { notifications: true, workoutReminder: false, publicProfile: true, loginNotify: false, ...(JSON.parse(localStorage.getItem(settingsKey)) || {}) };
+
+      if (!localStorage.getItem(profileKey)) {
+        localStorage.setItem(profileKey, JSON.stringify(profile));
+      }
+      if (!localStorage.getItem(calorieKey)) localStorage.setItem(calorieKey, profile.calories);
+
+      const $ = id => document.getElementById(id);
+      const initials = name => name.trim().split(/\s+/).map(part => part[0]).join('').slice(0, 2).toUpperCase() || '--';
+      const openModal = id => $(id).classList.add('open');
+      const closeModal = id => $(id).classList.remove('open');
+      const saveProfile = () => localStorage.setItem(profileKey, JSON.stringify(profile));
+      const saveSettings = () => localStorage.setItem(settingsKey, JSON.stringify(settings));
+
+      function showToast(message, type = 'success') {
+        const toast = $('toast');
+        toast.classList.toggle('error', type === 'error');
+        toast.querySelector('span').textContent = message;
+        toast.classList.add('show');
+        clearTimeout(window.profileToastTimer);
+        window.profileToastTimer = setTimeout(() => toast.classList.remove('show'), 2600);
+      }
+
+      function getFoods() { return JSON.parse(localStorage.getItem(foodKey)) || []; }
+      function getWorkoutHistory() { return JSON.parse(localStorage.getItem(workoutKey)) || []; }
+      function getTodayCalories() { return getFoods().reduce((sum, food) => sum + Number(food.calories || 0), 0); }
+
+      function renderProfile() {
+        const initialsText = initials(profile.name);
+        document.querySelectorAll('.profile-header-avatar, .top-avatar, #profileAvatar').forEach(el => el.textContent = initialsText);
+        document.querySelectorAll('.profile-header-name, .top-user-name').forEach(el => el.textContent = profile.name);
+        $('profileName').textContent = profile.name;
+        $('profileEmail').textContent = profile.email;
+        $('heroGoal').textContent = profile.goal;
+        $('profileGoalBadge').textContent = profile.goal;
+        $('detailName').textContent = profile.name;
+        $('detailEmail').textContent = profile.email;
+        $('detailWeight').textContent = `${profile.weight} kg`;
+        $('detailHeight').textContent = `${profile.height} cm`;
+        $('detailGoal').textContent = profile.goal;
+        $('detailWorkoutGoal').textContent = `${profile.workoutGoal} alkalom / hét`;
+        $('securityEmail').textContent = profile.email;
+        $('statWeight').textContent = `${profile.weight} kg`;
+        $('statHeight').textContent = `${profile.height} cm`;
+        $('statCalories').textContent = `${Number(profile.calories).toLocaleString('hu-HU')} kcal`;
+        $('statWorkoutGoal').textContent = `Cél: ${profile.workoutGoal} / hét`;
+        $('goalCalories').textContent = Number(profile.calories).toLocaleString('hu-HU');
+        $('goalWeight').textContent = profile.targetWeight ? profile.targetWeight : '--';
+        $('goalWorkout').textContent = profile.workoutGoal;
+        $('goalType').textContent = profile.goal;
+        $('activityCalories').textContent = `${getTodayCalories().toLocaleString('hu-HU')} kcal`;
+        $('activityCaloriesSub').textContent = `a ${Number(profile.calories).toLocaleString('hu-HU')} kcal-os keretből`;
+        $('statCaloriesUsed').textContent = `Mai bevitel: ${getTodayCalories().toLocaleString('hu-HU')} kcal`;
+        $('activityWeight').textContent = `${profile.weight} kg`;
+        $('activityWorkouts').textContent = getWorkoutHistory().length;
+        $('statWorkouts').textContent = `${getWorkoutHistory().length} edzés`;
+
+        const bmi = profile.height > 0 ? profile.weight / ((profile.height / 100) ** 2) : 0;
+        $('statBmi').textContent = `BMI: ${bmi ? bmi.toFixed(1) : '--'}`;
+
+        const created = new Date(profile.createdAt);
+        $('memberSince').textContent = `Tag: ${created.toLocaleDateString('hu-HU', { year: 'numeric', month: 'long' })}`;
+
+        if (weights.length === 0) {
+          $('weightChange').textContent = 'Nincs korábbi adat';
+        } else {
+          const first = Number(weights[0].weight), latest = Number(weights[weights.length - 1].weight);
+          const diff = latest - first;
+          $('weightChange').textContent = `${diff === 0 ? 'Változatlan' : `${diff > 0 ? '+' : ''}${diff.toFixed(1)} kg az első méréshez képest`}`;
+        }
+
+        const target = Number(profile.targetWeight);
+        const startWeight = weights.length ? Number(weights[0].weight) : Number(profile.weight);
+        const currentWeight = Number(profile.weight);
+        let percent = 0;
+        if (target && startWeight !== target) {
+          percent = ((startWeight - currentWeight) / (startWeight - target)) * 100;
+          if ((startWeight < target && currentWeight > target) || (startWeight > target && currentWeight < target)) percent = Math.abs(percent);
+          percent = Math.max(0, Math.min(100, percent));
+        } else if (target === currentWeight) percent = 100;
+        $('progressPercent').textContent = `${Math.round(percent)}%`;
+        $('progressFill').style.width = `${percent}%`;
+        if (target) {
+          const remaining = Math.abs(currentWeight - target).toFixed(1);
+          $('progressText').textContent = currentWeight === target ? 'Elérted a céltestsúlyt! 🎉' : `${remaining} kg a céltestsúlyig`;
+          $('progressDescription').textContent = `Jelenleg ${currentWeight} kg vagy, a beállított célod ${target} kg.`;
+        }
+      }
+
+      function renderHistory() {
+        const weightList = $('weightHistoryList');
+        weightList.innerHTML = '';
+        const sorted = [...weights].sort((a, b) => new Date(b.date) - new Date(a.date));
+        if (!sorted.length) {
+          weightList.innerHTML = '<div class="empty-state"><i data-lucide="scale"></i><strong>Még nincs mérési előzmény</strong><span>Rögzítsd az első testsúlyodat.</span></div>';
+        } else {
+          sorted.forEach(item => {
+            const row = document.createElement('div'); row.className = 'history-row';
+            row.innerHTML = `<div class="history-icon"><i data-lucide="scale"></i></div><div><strong>${Number(item.weight).toFixed(1)} kg</strong><span>${new Date(item.date).toLocaleDateString('hu-HU')}</span></div><button class="history-delete" data-weight-id="${item.id}" title="Mérés törlése"><i data-lucide="trash-2"></i></button>`;
+            weightList.appendChild(row);
+          });
+        }
+
+        const workoutList = $('workoutHistoryList');
+        const workouts = [...getWorkoutHistory()].sort((a, b) => new Date(b.date || b.completedAt || 0) - new Date(a.date || a.completedAt || 0));
+        workoutList.innerHTML = '';
+        if (!workouts.length) {
+          workoutList.innerHTML = '<div class="empty-state"><i data-lucide="dumbbell"></i><strong>Még nincs rögzített edzés</strong><span>Az edzésnapló adatai itt fognak megjelenni.</span></div>';
+        } else {
+          workouts.slice(0, 8).forEach(item => {
+            const row = document.createElement('div'); row.className = 'history-row';
+            row.innerHTML = `<div class="history-icon"><i data-lucide="dumbbell"></i></div><div><strong>${item.name || 'Edzés'}</strong><span>${item.date ? new Date(item.date).toLocaleDateString('hu-HU') : 'Rögzített edzés'}</span></div>`;
+            workoutList.appendChild(row);
+          });
+        }
+        lucide.createIcons();
+      }
+
+      function fillProfileForm() {
+        $('profile-name-input').value = profile.name;
+        $('profile-email-input').value = profile.email;
+        $('profile-weight-input').value = profile.weight;
+        $('profile-height-input').value = profile.height;
+        $('profile-goal-input').value = profile.goal;
+        $('profile-target-weight-input').value = profile.targetWeight;
+        $('profile-workout-goal-input').value = profile.workoutGoal;
+        $('profile-calorie-input').value = profile.calories;
+      }
+
+      function fillSettings() {
+        $('settingsNotifications').checked = !!settings.notifications;
+        $('settingsWorkoutReminder').checked = !!settings.workoutReminder;
+        $('settingsPublicProfile').checked = !!settings.publicProfile;
+        $('loginNotifyToggle').checked = !!settings.loginNotify;
+      }
+
+      document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const target = tab.dataset.tab;
+          document.querySelectorAll('.profile-tab').forEach(t => { t.classList.toggle('active', t === tab); t.setAttribute('aria-selected', t === tab); });
+          document.querySelectorAll('.tab-panel').forEach(panel => { const active = panel.id === `tab-${target}`; panel.classList.toggle('active', active); panel.hidden = !active; });
+          if (target === 'history') renderHistory();
+        });
+      });
+
+      document.querySelectorAll('[data-tab-target]').forEach(btn => btn.addEventListener('click', () => document.querySelector(`.profile-tab[data-tab="${btn.dataset.tabTarget}"]`).click()));
+      document.querySelectorAll('[data-open-edit]').forEach(btn => btn.addEventListener('click', () => { fillProfileForm(); openModal('profileModal'); }));
+      $('editProfileBtn').addEventListener('click', () => { fillProfileForm(); openModal('profileModal'); });
+      $('settingsBtn').addEventListener('click', () => { fillSettings(); openModal('settingsModal'); });
+      $('editGoalsBtn').addEventListener('click', () => { fillProfileForm(); openModal('profileModal'); });
+
+      document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => closeModal(btn.dataset.closeModal)));
+      document.querySelectorAll('.modal-backdrop').forEach(modal => modal.addEventListener('click', e => { if (e.target === modal) modal.classList.remove('open'); }));
+
+      $('profileForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const oldEmail = profile.email;
+        const newEmail = $('profile-email-input').value.trim().toLowerCase();
+        const newName = $('profile-name-input').value.trim();
+        if (!newName || !newEmail) return;
+        if (newEmail !== oldEmail) {
+          const users = JSON.parse(localStorage.getItem('users')) || [];
+          if (users.some(u => u.email === newEmail && u.email !== oldEmail)) { showToast('Ezzel az e-mail címmel már létezik fiók.', 'error'); return; }
+          const oldUsers = users.find(u => u.email === oldEmail);
+          if (oldUsers) oldUsers.email = newEmail;
+          localStorage.setItem('users', JSON.stringify(users));
+          localStorage.setItem(`profile_${newEmail}`, JSON.stringify({ ...profile, email: newEmail }));
+          [`calories_${oldEmail}`, `calorieTarget_${oldEmail}`, `weightHistory_${oldEmail}`, `workoutHistory_${oldEmail}`, `profileSettings_${oldEmail}`].forEach((oldKey, index) => {
+            const prefixes = ['calories_', 'calorieTarget_', 'weightHistory_', 'workoutHistory_', 'profileSettings_'];
+            const newKey = prefixes[index] + newEmail;
+            const value = localStorage.getItem(oldKey);
+            if (value !== null) localStorage.setItem(newKey, value);
+            localStorage.removeItem(oldKey);
+          });
+          localStorage.removeItem(`profile_${oldEmail}`);
+          localStorage.setItem('currentUser', JSON.stringify({ name: newName, email: newEmail }));
+          profile.email = newEmail;
+        }
+        profile.name = newName;
+        profile.weight = Number($('profile-weight-input').value);
+        profile.height = Number($('profile-height-input').value);
+        profile.goal = $('profile-goal-input').value;
+        profile.targetWeight = Number($('profile-target-weight-input').value);
+        profile.workoutGoal = Number($('profile-workout-goal-input').value);
+        profile.calories = Number($('profile-calorie-input').value);
+        saveProfile();
+        localStorage.setItem('calorieTarget_' + profile.email, profile.calories);
+        localStorage.setItem('currentUser', JSON.stringify({ name: profile.name, email: profile.email }));
+        renderProfile(); closeModal('profileModal'); showToast('A profilod sikeresen frissült.');
+      });
+
+      $('addWeightBtn').addEventListener('click', () => { $('new-weight').value = profile.weight; $('weight-date').value = new Date().toISOString().slice(0, 10); openModal('weightModal'); });
+      $('weightForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const value = Number($('new-weight').value);
+        const date = $('weight-date').value;
+        if (!value || !date) return;
+        weights.push({ id: Date.now(), weight: value, date });
+        profile.weight = value;
+        saveProfile(); localStorage.setItem(weightKey, JSON.stringify(weights));
+        closeModal('weightModal'); renderProfile(); renderHistory(); showToast('Az új mérés elmentve.');
+      });
+
+      $('weightHistoryList').addEventListener('click', e => {
+        const button = e.target.closest('[data-weight-id]'); if (!button) return;
+        weights = weights.filter(item => String(item.id) !== button.dataset.weightId);
+        localStorage.setItem(weightKey, JSON.stringify(weights)); renderHistory(); renderProfile(); showToast('A mérés törölve.');
+      });
+
+      $('changePasswordBtn').addEventListener('click', () => openModal('passwordModal'));
+      $('passwordForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const current = $('current-password').value, next = $('new-password').value, confirm = $('confirm-password').value;
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const account = users.find(u => u.email === profile.email);
+        if (!account || account.password !== current) { showToast('A jelenlegi jelszó hibás.', 'error'); return; }
+        if (next !== confirm) { showToast('Az új jelszavak nem egyeznek.', 'error'); return; }
+        account.password = next; localStorage.setItem('users', JSON.stringify(users)); $('passwordForm').reset(); closeModal('passwordModal'); showToast('A jelszavad sikeresen megváltozott.');
+      });
+
+      $('changeEmailBtn').addEventListener('click', () => { $('new-email').value = profile.email; openModal('emailModal'); });
+      $('emailForm').addEventListener('submit', e => {
+        e.preventDefault();
+        const newEmail = $('new-email').value.trim().toLowerCase();
+        const oldEmail = profile.email;
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        if (users.some(u => u.email === newEmail && u.email !== oldEmail)) { showToast('Ez az e-mail cím már használatban van.', 'error'); return; }
+        const account = users.find(u => u.email === oldEmail); if (account) account.email = newEmail;
+        localStorage.setItem('users', JSON.stringify(users));
+        localStorage.setItem(`profile_${newEmail}`, JSON.stringify({ ...profile, email: newEmail }));
+        [`calories_${oldEmail}`, `calorieTarget_${oldEmail}`, `weightHistory_${oldEmail}`, `workoutHistory_${oldEmail}`, `profileSettings_${oldEmail}`].forEach((oldKey, index) => {
+          const prefixes = ['calories_', 'calorieTarget_', 'weightHistory_', 'workoutHistory_', 'profileSettings_'];
+          const newKey = prefixes[index] + newEmail;
+          const value = localStorage.getItem(oldKey);
+          if (value !== null) localStorage.setItem(newKey, value);
+          localStorage.removeItem(oldKey);
+        });
+        localStorage.removeItem(`profile_${oldEmail}`);
+        profile.email = newEmail; localStorage.setItem('currentUser', JSON.stringify({ name: profile.name, email: newEmail }));
+        closeModal('emailModal'); renderProfile(); showToast('Az e-mail címed frissítve.');
+      });
+
+      [['settingsNotifications', 'notifications'], ['settingsWorkoutReminder', 'workoutReminder'], ['settingsPublicProfile', 'publicProfile'], ['loginNotifyToggle', 'loginNotify']].forEach(([id, key]) => $(id).addEventListener('change', e => { settings[key] = e.target.checked; saveSettings(); showToast('Beállítás mentve.'); }));
+
+      document.querySelectorAll('.notification-btn').forEach(btn => btn.addEventListener('click', () => showToast('Jelenleg nincs új értesítés.')));
+
+      $('deleteAccountBtn').addEventListener('click', () => {
+        if (!confirm('Biztosan törölni szeretnéd a fiókodat? Ez eltávolítja a helyi profil-, kalória- és előzményadatokat is.')) return;
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        localStorage.setItem('users', JSON.stringify(users.filter(u => u.email !== profile.email)));
+        [profileKey, calorieKey, foodKey, weightKey, workoutKey, settingsKey].forEach(key => localStorage.removeItem(key));
+        localStorage.removeItem('currentUser'); window.location.href = 'login.html';
+      });
+
+      document.querySelectorAll('.setting-row').forEach(row => row.addEventListener('change', () => saveSettings()));
+
+      renderProfile(); renderHistory(); fillSettings();
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
 </body>
 </html>
