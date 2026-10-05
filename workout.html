@@ -65,7 +65,7 @@
             <button class="btn-primary">
               <i data-lucide="play"></i> Egyéni edzés indítása
             </button>
-            <button class="btn-secondary">
+            <button class="btn-secondary" id="openNewPlanModalBtn">
               <i data-lucide="plus"></i> Új terv
             </button>
           </div>
@@ -73,7 +73,7 @@
 
         <section>
           <div class="section-header">Választható edzéstervek</div>
-          <div class="workout-cards-grid">
+          <div class="workout-cards-grid" id="workoutCardsContainer">
             
             <div class="workout-card">
               <div class="card-image-wrapper">
@@ -169,6 +169,44 @@
           </div>
         </section>
       </main>
+    </div>
+  </div>
+
+  <!-- Új terv létrehozása Modál -->
+  <div class="modal-backdrop" id="newPlanModal">
+    <div class="modal-panel">
+      <div class="modal-head">
+        <h3>Új edzésterv létrehozása</h3>
+        <button class="icon-btn" id="closeNewPlanModalBtn">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      
+      <form id="createPlanForm">
+        <div class="input-field">
+          <label for="plan-title">Edzésterv neve</label>
+          <input type="text" id="plan-title" placeholder="pl. Saját Testépítő Terv" required>
+        </div>
+
+        <div class="input-field">
+          <label for="plan-subtitle">Kártya alcím / Kiemelés</label>
+          <input type="text" id="plan-subtitle" placeholder="pl. Heti 4 napos izomnövelő felosztás" required>
+        </div>
+
+        <div class="input-field">
+          <label for="plan-desc">Részletes leírás</label>
+          <textarea id="plan-desc" rows="3" placeholder="Írd le az edzésterv célját és részleteit..." required></textarea>
+        </div>
+
+        <div class="input-field">
+          <label for="plan-image">Borítókép URL (Opcionális)</label>
+          <input type="url" id="plan-image" placeholder="https://images.unsplash.com/...">
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
+          Létrehozás
+        </button>
+      </form>
     </div>
   </div>
 
