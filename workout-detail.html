@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edzésterv Részletei - FitnessProgress</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="stylesheet" href="common.css">
+  <link rel="stylesheet" href="mobile.css" media="(max-width: 767px)">
+  <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
+
+  <style>
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .back-btn {
+      text-decoration: none;
+      color: var(--text);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 8px 14px;
+      border-radius: 8px;
+    }
+    .workout-banner {
+      width: 100%;
+      height: 220px;
+      border-radius: 16px;
+      object-fit: cover;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .weekly-schedule {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+    .day-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .day-card h4 {
+      color: var(--primary);
+      font-size: 1rem;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .day-card ul {
+      margin-left: 20px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+    .tag {
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--primary);
+      font-size: 0.75rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="user-profile">
+      <div class="avatar">KT</div>
+      <div class="user-info">
+        <span class="greeting">Üdv újra,</span>
+        <span class="user-name">Kovács Tamás</span>
+      </div>
+    </div>
+    
+    <div style="display: flex; gap: 8px;">
+      <button class="icon-btn" aria-label="Értesítések">
+        <i data-lucide="bell"></i>
+      </button>
+      <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+    <nav class="navigation">
+      <div class="brand">FitnessProgress</div>
+      <div class="nav-links">
+        <a href="index.html" class="nav-link">
+          <i data-lucide="users"></i>
+          <span>Közösség</span>
+        </a>
+        <a href="workout.html" class="nav-link active">
+          <i data-lucide="dumbbell"></i>
+          <span>Edzés</span>
+        </a>
+        <a href="calories.html" class="nav-link">
+          <i data-lucide="pie-chart"></i>
+          <span>Kalória</span>
+        </a>
+        <a href="profile.html" class="nav-link">
+          <i data-lucide="user"></i>
+          <span>Profil</span>
+        </a>
+      </div>
+    </nav>
+
+    <div class="main-wrapper">
+      <main>
+        <div class="detail-header">
+          <a href="workout.html" class="back-btn">
+            <i data-lucide="arrow-left"></i> Vissza az edzésekhez
+          </a>
+        </div>
+
+        <article id="workoutDetailContent">
+          <!-- A Javascript tölti fel dinamikusan az adatokkal -->
+          <div class="hero-box">
+            <h2 id="planTitle">Terv betöltése...</h2>
+            <p id="planDesc"></p>
+          </div>
+        </article>
+      </main>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
