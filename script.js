@@ -233,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================
   // 5. EDZÉSTERVEK ÉS RÉSZLETES NÉZET KEZELÉSE
   // ==========================================
-  const workoutPlans = {
+  const defaultWorkoutPlans = {
     '1': {
       title: 'Push - Pull - Leg',
       subtitle: 'Toló - Húzó - Láb felosztás',
@@ -341,14 +341,110 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
+  // Dinamikus edzéstervek lekezelése (alapértelmezett + felhasználó által mentettek)
+  const getCustomPlans = () => JSON.parse(localStorage.getItem('customWorkoutPlans')) || {};
+  const getAllWorkoutPlans = () => ({ ...defaultWorkoutPlans, ...getCustomPlans() });
+
+  // ÚJ TERV LÉTREHOZÁSA (WORKOUT.HTML)
+  const openNewPlanModalBtn = document.getElementById('openNewPlanModalBtn');
+  const closeNewPlanModalBtn = document.getElementById('closeNewPlanModalBtn');
+  const newPlanModal = document.getElementById('newPlanModal');
+  const createPlanForm = document.getElementById('createPlanForm');
+  const workoutCardsContainer = document.getElementById('workoutCardsContainer');
+
+  if (openNewPlanModalBtn && closeNewPlanModalBtn && newPlanModal) {
+    openNewPlanModalBtn.addEventListener('click', () => newPlanModal.classList.add('open'));
+    closeNewPlanModalBtn.addEventListener('click', () => newPlanModal.classList.remove('open'));
+  }
+
+  const renderCustomWorkoutCards = () => {
+    if (!workoutCardsContainer) return;
+
+    const customPlans = getCustomPlans();
+    Object.keys(customPlans).forEach(id => {
+      // Elkerüljük a duplikációt, ha már kirajzoltuk
+      if (document.getElementById(`custom-plan-card-${id}`)) return;
+
+      const plan = customPlans[id];
+      const cardEl = document.createElement('div');
+      cardEl.className = 'workout-card';
+      cardEl.id = `custom-plan-card-${id}`;
+
+      const defaultImg = 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop';
+      const imgSrc = plan.image && plan.image.trim() !== '' ? plan.image : defaultImg;
+
+      cardEl.innerHTML = `
+        <div class="card-image-wrapper">
+          <img src="${imgSrc}" class="card-image" alt="${plan.title}" onerror="this.src='${defaultImg}'">
+        </div>
+        <div class="card-content">
+          <h3 class="card-title">${plan.title}</h3>
+          <p class="card-subtitle">${plan.subtitle}</p>
+          <a href="workout-detail.html?id=${id}" class="btn-primary card-btn">
+            Edzésterv indítása <i data-lucide="chevron-right"></i>
+          </a>
+        </div>
+      `;
+      workoutCardsContainer.appendChild(cardEl);
+    });
+
+    if (window.lucide) {
+      lucide.createIcons();
+    }
+  };
+
+  if (createPlanForm) {
+    createPlanForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const title = document.getElementById('plan-title').value.trim();
+      const subtitle = document.getElementById('plan-subtitle').value.trim();
+      const description = document.getElementById('plan-desc').value.trim();
+      const image = document.getElementById('plan-image').value.trim();
+
+      const planId = 'custom_' + Date.now();
+
+      const newPlan = {
+        title,
+        subtitle,
+        description,
+        image: image || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
+        schedule: [
+          { day: 'Hétfő', name: 'Egyéni edzés nap A', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Kedd', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Szerda', name: 'Egyéni edzés nap B', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Csütörtök', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Péntek', name: 'Egyéni edzés nap C', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Szombat', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
+        ]
+      };
+
+      const customPlans = getCustomPlans();
+      customPlans[planId] = newPlan;
+      localStorage.setItem('customWorkoutPlans', JSON.stringify(customPlans));
+
+      createPlanForm.reset();
+      newPlanModal.classList.remove('open');
+
+      renderCustomWorkoutCards();
+    });
+  }
+
+  // Meglévő egyedi tervek betöltése
+  renderCustomWorkoutCards();
+
+  // RÉSZLETES NÉZET KEZELÉSE (WORKOUT-DETAIL.HTML)
   const detailContainer = document.getElementById('workoutDetailContent');
   if (detailContainer) {
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '1';
-    const plan = workoutPlans[planId] || workoutPlans['1'];
+    
+    const allPlans = getAllWorkoutPlans();
+    const plan = allPlans[planId] || allPlans['1'];
 
     // Naptárszerű kártyák generálása
-    let calendarCardsHTML = plan.schedule.map(item => {
+    let calendarCardsHTML = (plan.schedule || []).map(item => {
       const isRest = item.name.toLowerCase().includes('pihenő') || item.name.toLowerCase().includes('séta');
       return `
         <div style="
@@ -380,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
 
           <ul style="list-style: none; padding: 0; margin: 0; font-size: 0.85rem; color: #d1d5db; display: flex; flex-direction: column; gap: 6px;">
-            ${item.details.map(d => `
+            ${(item.details || []).map(d => `
               <li style="display: flex; align-items: flex-start; gap: 6px;">
                 <span style="color: var(--primary, #3b82f6); font-weight: bold;">•</span>
                 <span>${d}</span>
