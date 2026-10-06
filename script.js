@@ -153,12 +153,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const remaining = dailyTarget - totalCalories;
-      document.getElementById('calorieTarget').textContent = `Napi kalóriakeret: ${dailyTarget.toLocaleString()} kcal`;
-      document.getElementById('calorieStats').textContent = `Eddig bevíve: ${totalCalories.toLocaleString()} kcal | Megmaradt: ${remaining.toLocaleString()} kcal`;
+      const targetEl = document.getElementById('calorieTarget');
+      const statsEl = document.getElementById('calorieStats');
+      const protEl = document.getElementById('totalProtein');
+      const carbEl = document.getElementById('totalCarbs');
+      const fatEl = document.getElementById('totalFat');
 
-      document.getElementById('totalProtein').textContent = `${totalProtein} g`;
-      document.getElementById('totalCarbs').textContent = `${totalCarbs} g`;
-      document.getElementById('totalFat').textContent = `${totalFat} g`;
+      if (targetEl) targetEl.textContent = `Napi kalóriakeret: ${dailyTarget.toLocaleString()} kcal`;
+      if (statsEl) statsEl.textContent = `Eddig bevíve: ${totalCalories.toLocaleString()} kcal | Megmaradt: ${remaining.toLocaleString()} kcal`;
+      if (protEl) protEl.textContent = `${totalProtein} g`;
+      if (carbEl) carbEl.textContent = `${totalCarbs} g`;
+      if (fatEl) fatEl.textContent = `${totalFat} g`;
 
       document.querySelectorAll('.delete-food-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -341,16 +346,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Dinamikus edzéstervek lekezelése (alapértelmezett + felhasználó által mentettek)
+  // Továbbfejlesztett és rugalmas szövegfeldolgozó
+  const getPresetSchedule = (type, customText) => {
+    if (type === 'fullbody') {
+      return [
+        { day: 'Hétfő', name: 'Full Body A (Mell, Láb, Hát)', details: ['Guggolás rúddal: 4x8', 'Fekvenyomás: 4x8', 'Döntött törzsű evezés: 4x10', 'Vállból nyomás: 3x10'] },
+        { day: 'Kedd', name: 'Pihenőnap', details: ['Regeneráció, könnyű séta'] },
+        { day: 'Szerda', name: 'Full Body B (Erőfókusz)', details: ['Felhúzás: 4x6', 'Ferde pados nyomás: 4x8', 'Lehúzás csigán: 4x10', 'Bicepsz & Tricepsz: 3x12'] },
+        { day: 'Csütörtök', name: 'Pihenőnap', details: ['Pihenés'] },
+        { day: 'Péntek', name: 'Full Body C (Volumen)', details: ['Lábtolás: 4x12', 'Tolódzkodás: 3x10', 'T-rúdos evezés: 4x10', 'Oldalemelés: 4x12'] },
+        { day: 'Szombat', name: 'Pihenőnap / Aktiválás', details: ['Könnyű kardió, nyújtás'] },
+        { day: 'Vasárnap', name: 'Pihenőnap', details: ['Teljes pihenőnap'] }
+      ];
+    } else if (type === 'ppl') {
+      return [
+        { day: 'Hétfő', name: 'Push (Mell, Váll, Tricepsz)', details: ['Fekvenyomás: 4x8', 'Mellről nyomás: 3x10', 'Kézi súlyzós tárogatás: 3x12', 'Tricepsz letolás: 4x12'] },
+        { day: 'Kedd', name: 'Pull (Hát, Bicepsz, Hátsó váll)', details: ['Húzódzkodás / Mellhez húzás: 4x8', 'Evezés kézi súlyzóval: 4x10', 'Facepull: 3x15', 'Bicepsz franciarúddal: 3x12'] },
+        { day: 'Szerda', name: 'Legs (Láb, Vádli, Has)', details: ['Guggolás: 4x8', 'Román felhúzás: 4x10', 'Lábnyújtás & Hajítás: 3x12', 'Vádli állva: 4x15'] },
+        { day: 'Csütörtök', name: 'Pihenőnap', details: ['Regenerálódás'] },
+        { day: 'Péntek', name: 'Push / Pull Kevert', details: ['Ferde pados nyomás: 4x10', 'Döntött törzsű evezés: 4x10', 'Oldalemelés: 4x15'] },
+        { day: 'Szombat', name: 'Láb & Has', details: ['Lábtolás: 4x12', 'Kitörések: 3x10/láb', 'Hasprés csigán: 4x15'] },
+        { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
+      ];
+    } else {
+      const days = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'];
+      
+      // Feldolgozzuk a beírt szöveget: szétbontjuk vesszők vagy új sorok szerint
+      let rawItems = customText
+        ? customText.split(/[\n,]+/).map(item => item.trim()).filter(item => item.length > 0)
+        : [];
+
+      // Ha nincs megadva semmi, akkor alapértelmezett üzenet
+      if (rawItems.length === 0) {
+        rawItems = ['Guggolás 4x8', 'Fekvenyomás 4x8', 'Evezés 4x10'];
+      }
+
+      // Ellenőrizzük, hogy vannak-e megadva specifikus napnevek (pl. Hétfő: Guggolás)
+      const hasDayNames = rawItems.some(item => days.some(d => item.toLowerCase().startsWith(d.toLowerCase())));
+
+      if (hasDayNames) {
+        return days.map((dayName, idx) => {
+          const matchedItems = rawItems.filter(item => item.toLowerCase().startsWith(dayName.toLowerCase()));
+          let details = matchedItems.map(item => item.replace(new RegExp(`^${dayName}:?`, 'i'), '').trim()).filter(i => i !== '');
+
+          if (details.length === 0) {
+            return {
+              day: dayName,
+              name: idx % 2 === 1 ? 'Pihenőnap' : 'Aktív pihenés',
+              details: [idx % 2 === 1 ? 'Pihenés és regeneráció' : 'Séta, könnyű kardió']
+            };
+          }
+
+          return {
+            day: dayName,
+            name: `${dayName} Edzés`,
+            details: details
+          };
+        });
+      } else {
+        // Ha csak egy sima lista lett beírva (pl. "Guggolás 4x8, Fekvenyomás 4x8, Evezés 3x10")
+        // Akkor az edzésnapokra szétdobjuk a megadott gyakorlatokat
+        return days.map((dayName, idx) => {
+          if (idx === 0 || idx === 2 || idx === 4) { // Hétfő, Szerda, Péntek edzésnap
+            return {
+              day: dayName,
+              name: `${dayName} Edzés`,
+              details: rawItems
+            };
+          }
+          return {
+            day: dayName,
+            name: 'Pihenőnap',
+            details: ['Pihenés és regeneráció']
+          };
+        });
+      }
+    }
+  };
+
   const getCustomPlans = () => JSON.parse(localStorage.getItem('customWorkoutPlans')) || {};
   const getAllWorkoutPlans = () => ({ ...defaultWorkoutPlans, ...getCustomPlans() });
 
-  // ÚJ TERV LÉTREHOZÁSA (WORKOUT.HTML)
+  // DOM Elemek kiválasztása
   const openNewPlanModalBtn = document.getElementById('openNewPlanModalBtn');
   const closeNewPlanModalBtn = document.getElementById('closeNewPlanModalBtn');
   const newPlanModal = document.getElementById('newPlanModal');
   const createPlanForm = document.getElementById('createPlanForm');
   const workoutCardsContainer = document.getElementById('workoutCardsContainer');
+  const planSplitSelect = document.getElementById('plan-split');
+  const customExercisesGroup = document.getElementById('custom-exercises-group');
+
+  if (planSplitSelect && customExercisesGroup) {
+    planSplitSelect.addEventListener('change', (e) => {
+      if (e.target.value === 'custom') {
+        customExercisesGroup.style.display = 'block';
+      } else {
+        customExercisesGroup.style.display = 'none';
+      }
+    });
+  }
 
   if (openNewPlanModalBtn && closeNewPlanModalBtn && newPlanModal) {
     openNewPlanModalBtn.addEventListener('click', () => newPlanModal.classList.add('open'));
@@ -362,7 +456,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const customPlans = getCustomPlans();
     Object.keys(customPlans).forEach(id => {
-      // Elkerüljük a duplikációt, ha már kirajzoltuk
       if (document.getElementById(`custom-plan-card-${id}`)) return;
 
       const plan = customPlans[id];
@@ -400,6 +493,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = document.getElementById('plan-title').value.trim();
       const subtitle = document.getElementById('plan-subtitle').value.trim();
       const description = document.getElementById('plan-desc').value.trim();
+      const splitType = document.getElementById('plan-split').value;
+      const customExercises = document.getElementById('plan-custom-exercises')?.value || '';
       const image = document.getElementById('plan-image').value.trim();
 
       const planId = 'custom_' + Date.now();
@@ -409,15 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         subtitle,
         description,
         image: image || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
-        schedule: [
-          { day: 'Hétfő', name: 'Egyéni edzés nap A', details: ['Gyakorlatok hozzáadása folyamatban'] },
-          { day: 'Kedd', name: 'Pihenőnap', details: ['Pihenés'] },
-          { day: 'Szerda', name: 'Egyéni edzés nap B', details: ['Gyakorlatok hozzáadása folyamatban'] },
-          { day: 'Csütörtök', name: 'Pihenőnap', details: ['Pihenés'] },
-          { day: 'Péntek', name: 'Egyéni edzés nap C', details: ['Gyakorlatok hozzáadása folyamatban'] },
-          { day: 'Szombat', name: 'Pihenőnap', details: ['Pihenés'] },
-          { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
-        ]
+        schedule: getPresetSchedule(splitType, customExercises)
       };
 
       const customPlans = getCustomPlans();
@@ -425,13 +512,13 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('customWorkoutPlans', JSON.stringify(customPlans));
 
       createPlanForm.reset();
+      if (customExercisesGroup) customExercisesGroup.style.display = 'none';
       newPlanModal.classList.remove('open');
 
       renderCustomWorkoutCards();
     });
   }
 
-  // Meglévő egyedi tervek betöltése
   renderCustomWorkoutCards();
 
   // RÉSZLETES NÉZET KEZELÉSE (WORKOUT-DETAIL.HTML)
@@ -443,7 +530,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const allPlans = getAllWorkoutPlans();
     const plan = allPlans[planId] || allPlans['1'];
 
-    // Naptárszerű kártyák generálása
     let calendarCardsHTML = (plan.schedule || []).map(item => {
       const isRest = item.name.toLowerCase().includes('pihenő') || item.name.toLowerCase().includes('séta');
       return `
@@ -499,7 +585,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <section style="margin-top: 32px;">
-        <div class="section-header" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Heti Beosztás </div>
+        <div class="section-header" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Heti Beosztás</div>
         <div style="
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

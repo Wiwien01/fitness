@@ -172,9 +172,9 @@
     </div>
   </div>
 
-  <!-- Új terv létrehozása Modál -->
+<!-- Új terv létrehozása Modál -->
   <div class="modal-backdrop" id="newPlanModal">
-    <div class="modal-panel">
+    <div class="modal-panel" style="max-height: 90vh; overflow-y: auto;">
       <div class="modal-head">
         <h3>Új edzésterv létrehozása</h3>
         <button class="icon-btn" id="closeNewPlanModalBtn">
@@ -185,17 +185,31 @@
       <form id="createPlanForm">
         <div class="input-field">
           <label for="plan-title">Edzésterv neve</label>
-          <input type="text" id="plan-title" placeholder="pl. Saját Testépítő Terv" required>
+          <input type="text" id="plan-title" placeholder="pl. Saját Erőemelő Terv" required>
         </div>
 
         <div class="input-field">
           <label for="plan-subtitle">Kártya alcím / Kiemelés</label>
-          <input type="text" id="plan-subtitle" placeholder="pl. Heti 4 napos izomnövelő felosztás" required>
+          <input type="text" id="plan-subtitle" placeholder="pl. Heti 3 napos intenzív felosztás" required>
         </div>
 
         <div class="input-field">
           <label for="plan-desc">Részletes leírás</label>
-          <textarea id="plan-desc" rows="3" placeholder="Írd le az edzésterv célját és részleteit..." required></textarea>
+          <textarea id="plan-desc" rows="2" placeholder="Írd le az edzésterv célját..." required></textarea>
+        </div>
+
+        <div class="input-field">
+          <label for="plan-split">Alapértelmezett edzésbeosztás minta</label>
+          <select id="plan-split" style="width: 100%; padding: 10px; border-radius: 8px; background: #1e293b; color: #fff; border: 1px solid #334155;">
+            <option value="fullbody">Full Body (Hétfő / Szerda / Péntek)</option>
+            <option value="ppl">Push - Pull - Leg (Hétfő / Kedd / Szerda)</option>
+            <option value="custom">Egyéni (Saját gyakorlatok megadása alább)</option>
+          </select>
+        </div>
+
+        <div class="input-field" id="custom-exercises-group" style="display: none;">
+          <label for="plan-custom-exercises">Gyakorlatok (naponta vesszővel elválasztva)</label>
+          <textarea id="plan-custom-exercises" rows="4" placeholder="Hétfő: Fekvenyomás 4x8, Guggolás 4x8&#10;Szerda: Felhúzás 4x6, Evezés 3x10&#10;Péntek: Mellről nyomás 4x8, Lábtolás 3x12"></textarea>
         </div>
 
         <div class="input-field">
