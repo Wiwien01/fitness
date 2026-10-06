@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================
-  // 3. KALÓRIA & MAKRÓ NYOMONKÖVETÉS
+  // 3. KALÓRIA, MAKRÓ, RECEPT ÉS VÍZ NYOMONKÖVETÉS
   // ==========================================
   const foodList = document.getElementById('foodList');
   const openFoodModalBtn = document.getElementById('openFoodModalBtn');
@@ -106,90 +106,237 @@ document.addEventListener('DOMContentLoaded', () => {
   const editTargetBtn = document.getElementById('editTargetBtn');
 
   if (foodList && currentUser) {
-    const foodStorageKey = `calories_${currentUser.email}`;
-    const targetStorageKey = `calorieTarget_${currentUser.email}`;
+    const email = currentUser.email;
+    const foodStorageKey = `calories_${email}`;
+    const targetStorageKey = `calorieTarget_${email}`;
+    const recipeStorageKey = `customRecipes_${email}`;
+    const waterStorageKey = `water_${email}`;
+    const WATER_GOAL = 2500;
+    const WATER_STEP = 250;
+    const MEALS = ['Reggeli', 'Ebéd', 'Uzsonna', 'Vacsora'];
+    const defaultImg = 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=200&auto=format&fit=crop';
 
+    const $ = (id) => document.getElementById(id);
+    const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const pad = (n) => String(n).padStart(2, '0');
+    const toISO = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+    const todayISO = () => toISO(new Date());
+    const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const fromISO = (iso) => { const [y, m, d] = iso.split('-').map(Number); return new Date(y, m - 1, d); };
+
+    let selectedDate = todayISO();
+    let recipeFilter = 'Mind';
+    let recipeQuery = '';
+
+    // ---------- Adattárolás ----------
     const getTarget = () => Number(localStorage.getItem(targetStorageKey)) || 2100;
-    const getFoods = () => JSON.parse(localStorage.getItem(foodStorageKey)) || [];
+    const getAllFoods = () => JSON.parse(localStorage.getItem(foodStorageKey)) || [];
+    const saveAllFoods = (arr) => localStorage.setItem(foodStorageKey, JSON.stringify(arr));
+    const getCustomRecipes = () => JSON.parse(localStorage.getItem(recipeStorageKey)) || [];
+    const saveCustomRecipes = (arr) => localStorage.setItem(recipeStorageKey, JSON.stringify(arr));
+    const getWaterData = () => JSON.parse(localStorage.getItem(waterStorageKey)) || {};
+    const getWater = () => Number(getWaterData()[selectedDate]) || 0;
+    const setWater = (ml) => {
+      const data = getWaterData();
+      data[selectedDate] = Math.max(0, ml);
+      localStorage.setItem(waterStorageKey, JSON.stringify(data));
+    };
 
+    // Régi (dátum nélküli) bejegyzések átvétele a mai napra
+    (() => {
+      const all = getAllFoods();
+      let changed = false;
+      all.forEach(f => {
+        if (!f.date) { f.date = todayISO(); changed = true; }
+        if (!f.id) { f.id = newId(); changed = true; }
+      });
+      if (changed) saveAllFoods(all);
+    })();
+
+    const getFoods = () => getAllFoods().filter(f => f.date === selectedDate);
+
+    // ---------- Előre beállított receptek (1 adag) ----------
+    const presetRecipes = [
+      { id: 'p1', emoji: '🥣', name: 'Zabkása banánnal és mogyoróvajjal', category: 'Reggeli', calories: 420, protein: 16, carbs: 58, fat: 14, time: '10 perc', ingredients: '60 g zabpehely, 2 dl tej, 1 banán, 1 evőkanál mogyoróvaj' },
+      { id: 'p2', emoji: '🍳', name: 'Rántotta teljes kiőrlésű pirítóssal', category: 'Reggeli', calories: 380, protein: 24, carbs: 20, fat: 22, time: '10 perc', ingredients: '3 tojás, 1 szelet teljes kiőrlésű kenyér, 1 tk olaj, paradicsom' },
+      { id: 'p3', emoji: '🥛', name: 'Görög joghurt gyümölccsel és granolával', category: 'Reggeli', calories: 310, protein: 20, carbs: 38, fat: 8, time: '3 perc', ingredients: '200 g görög joghurt, 80 g bogyós gyümölcs, 25 g granola' },
+      { id: 'p4', emoji: '🥞', name: 'Protein palacsinta', category: 'Reggeli', calories: 350, protein: 28, carbs: 40, fat: 8, time: '15 perc', ingredients: '40 g zabliszt, 1 tojás, 1 kanál fehérjepor, 1 dl tej, áfonya' },
+      { id: 'p5', emoji: '🍗', name: 'Csirkemell rizzsel és brokkolival', category: 'Ebéd', calories: 520, protein: 48, carbs: 58, fat: 8, time: '25 perc', ingredients: '150 g csirkemell, 70 g száraz rizs, 150 g brokkoli, 1 tk olívaolaj' },
+      { id: 'p6', emoji: '🍝', name: 'Tonhalas fullkorn tészta', category: 'Ebéd', calories: 560, protein: 38, carbs: 68, fat: 14, time: '20 perc', ingredients: '80 g fullkorn tészta, 1 doboz tonhal, paradicsomszósz, olívabogyó' },
+      { id: 'p7', emoji: '🍲', name: 'Gulyásleves', category: 'Ebéd', calories: 380, protein: 26, carbs: 24, fat: 18, time: '60 perc', ingredients: '120 g marhahús, burgonya, sárgarépa, paprika, hagyma' },
+      { id: 'p8', emoji: '🍗', name: 'Sült csirkecomb sült zöldségekkel', category: 'Ebéd', calories: 610, protein: 42, carbs: 34, fat: 32, time: '45 perc', ingredients: '1 csirkecomb, 200 g sütőben sült zöldség, fűszerek' },
+      { id: 'p9', emoji: '🥗', name: 'Quinoa saláta csicseriborsóval', category: 'Ebéd', calories: 450, protein: 16, carbs: 62, fat: 15, time: '20 perc', ingredients: '60 g quinoa, 100 g csicseriborsó, uborka, paradicsom, citromlé, olaj' },
+      { id: 'p10', emoji: '🫘', name: 'Lencsefőzelék tojással', category: 'Ebéd', calories: 390, protein: 24, carbs: 50, fat: 10, time: '30 perc', ingredients: '80 g lencse, 1 tojás, hagyma, fokhagyma, liszt, ecet' },
+      { id: 'p11', emoji: '🧀', name: 'Túró gyümölccsel', category: 'Uzsonna', calories: 220, protein: 24, carbs: 18, fat: 5, time: '2 perc', ingredients: '200 g félzsíros túró, 100 g gyümölcs, fahéj' },
+      { id: 'p12', emoji: '🥤', name: 'Protein shake banánnal', category: 'Uzsonna', calories: 250, protein: 30, carbs: 24, fat: 4, time: '2 perc', ingredients: '1 kanál fehérjepor, 1 banán, 2 dl víz vagy mandulatej' },
+      { id: 'p13', emoji: '🥜', name: 'Mandula (30 g)', category: 'Uzsonna', calories: 175, protein: 6, carbs: 6, fat: 15, time: '1 perc', ingredients: '30 g natúr mandula' },
+      { id: 'p14', emoji: '🍙', name: 'Rizs sütemény avokádóval', category: 'Uzsonna', calories: 230, protein: 5, carbs: 24, fat: 13, time: '5 perc', ingredients: '2 rizs sütemény, fél avokádó, só, citrom' },
+      { id: 'p15', emoji: '🐟', name: 'Sült lazac édesburgonyával', category: 'Vacsora', calories: 580, protein: 38, carbs: 42, fat: 26, time: '30 perc', ingredients: '150 g lazacfilé, 200 g édesburgonya, spárga, citrom' },
+      { id: 'p16', emoji: '🍳', name: 'Zöldséges omlett', category: 'Vacsora', calories: 340, protein: 24, carbs: 10, fat: 23, time: '12 perc', ingredients: '3 tojás, paprika, gomba, spenót, 30 g sajt' },
+      { id: 'p17', emoji: '🦃', name: 'Pulykamell cukkini tésztával', category: 'Vacsora', calories: 420, protein: 44, carbs: 28, fat: 14, time: '25 perc', ingredients: '150 g pulykamell, 1 nagy cukkini, paradicsomszósz, parmezán' },
+      { id: 'p18', emoji: '🥙', name: 'Csirkés wrap salátával', category: 'Vacsora', calories: 450, protein: 34, carbs: 42, fat: 16, time: '15 perc', ingredients: '1 teljes kiőrlésű tortilla, 100 g csirkemell, saláta, joghurtos öntet' }
+    ];
+    const getAllRecipes = () => [...presetRecipes, ...getCustomRecipes()];
+
+    // ---------- Dátum navigáció ----------
+    const formatDateLabel = (iso) => {
+      const today = todayISO();
+      const yest = toISO(new Date(Date.now() - 86400000));
+      if (iso === today) return 'Ma';
+      if (iso === yest) return 'Tegnap';
+      return fromISO(iso).toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' });
+    };
+
+    const shiftDate = (days) => {
+      const d = fromISO(selectedDate);
+      d.setDate(d.getDate() + days);
+      const iso = toISO(d);
+      if (iso > todayISO()) return;
+      selectedDate = iso;
+      renderAll();
+    };
+
+    // ---------- Megjelenítés ----------
     const renderFoods = () => {
       const foods = getFoods();
       const dailyTarget = getTarget();
       foodList.innerHTML = '';
 
-      let totalCalories = 0;
-      let totalProtein = 0;
-      let totalCarbs = 0;
-      let totalFat = 0;
+      let totalCalories = 0, totalProtein = 0, totalCarbs = 0, totalFat = 0;
+      foods.forEach(item => {
+        totalCalories += Number(item.calories);
+        totalProtein += Number(item.protein || 0);
+        totalCarbs += Number(item.carbs || 0);
+        totalFat += Number(item.fat || 0);
+      });
 
       if (foods.length === 0) {
-        foodList.innerHTML = `<p style="color: var(--muted); text-align: center; padding: 20px;">Még nem rögzítettél ételt a mai napon.</p>`;
+        foodList.innerHTML = `<p class="empty-msg">Erre a napra még nem rögzítettél ételt.</p>`;
       } else {
-        foods.forEach((item, index) => {
-          totalCalories += Number(item.calories);
-          totalProtein += Number(item.protein || 0);
-          totalCarbs += Number(item.carbs || 0);
-          totalFat += Number(item.fat || 0);
+        MEALS.forEach(meal => {
+          const items = foods.filter(f => f.category === meal);
+          if (!items.length) return;
+          const sum = items.reduce((a, f) => a + Number(f.calories), 0);
 
-          const defaultImg = 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?q=80&w=200&auto=format&fit=crop';
-          const imgUrl = item.image && item.image.trim() !== '' ? item.image : defaultImg;
+          const head = document.createElement('div');
+          head.className = 'meal-head';
+          head.innerHTML = `<span>${meal}</span><span>${sum} kcal</span>`;
+          foodList.appendChild(head);
 
-          const itemEl = document.createElement('div');
-          itemEl.className = 'group-item';
-          itemEl.innerHTML = `
-            <div class="food-card">
-              <img src="${imgUrl}" alt="${item.name}" class="food-img" onerror="this.src='${defaultImg}'">
-              <div class="group-meta">
-                <h3>${item.category} - ${item.name}</h3>
-                <p>${item.calories} kcal ${item.protein ? `| P: ${item.protein}g C: ${item.carbs}g F:${item.fat}g` : ''}</p>
+          items.forEach(item => {
+            const visual = item.emoji
+              ? `<div class="food-img food-emoji">${esc(item.emoji)}</div>`
+              : `<img src="${esc(item.image && item.image.trim() ? item.image : defaultImg)}" alt="${esc(item.name)}" class="food-img" onerror="this.src='${defaultImg}'">`;
+            const macros = (Number(item.protein) || Number(item.carbs) || Number(item.fat))
+              ? `| P: ${item.protein}g C: ${item.carbs}g F: ${item.fat}g` : '';
+            const el = document.createElement('div');
+            el.className = 'group-item';
+            el.innerHTML = `
+              <div class="food-card">
+                ${visual}
+                <div class="group-meta">
+                  <h3>${esc(item.name)}</h3>
+                  <p>${esc(item.calories)} kcal ${macros}</p>
+                </div>
               </div>
-            </div>
-            <button class="btn-join delete-food-btn" data-index="${index}" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.2);">
-              Törlés
-            </button>
-          `;
-          foodList.appendChild(itemEl);
+              <button class="btn-join btn-danger delete-food-btn" data-id="${esc(item.id)}">
+                Törlés
+              </button>`;
+            foodList.appendChild(el);
+          });
         });
       }
 
       const remaining = dailyTarget - totalCalories;
-      const targetEl = document.getElementById('calorieTarget');
-      const statsEl = document.getElementById('calorieStats');
-      const protEl = document.getElementById('totalProtein');
-      const carbEl = document.getElementById('totalCarbs');
-      const fatEl = document.getElementById('totalFat');
+      $('calorieTarget').textContent = `Napi kalóriakeret: ${dailyTarget.toLocaleString()} kcal`;
+      $('calorieStats').textContent = remaining >= 0
+        ? `Eddig bevíve: ${totalCalories.toLocaleString()} kcal | Megmaradt: ${remaining.toLocaleString()} kcal`
+        : `Eddig bevíve: ${totalCalories.toLocaleString()} kcal | Túllépted: ${Math.abs(remaining).toLocaleString()} kcal`;
 
-      if (targetEl) targetEl.textContent = `Napi kalóriakeret: ${dailyTarget.toLocaleString()} kcal`;
-      if (statsEl) statsEl.textContent = `Eddig bevíve: ${totalCalories.toLocaleString()} kcal | Megmaradt: ${remaining.toLocaleString()} kcal`;
-      if (protEl) protEl.textContent = `${totalProtein} g`;
-      if (carbEl) carbEl.textContent = `${totalCarbs} g`;
-      if (fatEl) fatEl.textContent = `${totalFat} g`;
+      const bar = $('calorieProgress');
+      if (bar) {
+        const pct = Math.min(100, Math.round(totalCalories / dailyTarget * 100));
+        bar.style.width = pct + '%';
+        bar.classList.toggle('over', remaining < 0);
+        $('calorieProgressLabel').textContent = `${Math.round(totalCalories / dailyTarget * 100)}%`;
+      }
 
-      document.querySelectorAll('.delete-food-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const index = e.currentTarget.getAttribute('data-index');
-          deleteFood(index);
-        });
-      });
+      // Makrók: gramm + a kalóriából való arány
+      $('totalProtein').textContent = `${totalProtein} g`;
+      $('totalCarbs').textContent = `${totalCarbs} g`;
+      $('totalFat').textContent = `${totalFat} g`;
+      const macroKcal = totalProtein * 4 + totalCarbs * 4 + totalFat * 9;
+      const pctOf = (kcal) => macroKcal ? Math.round(kcal / macroKcal * 100) : 0;
+      $('pctProtein').textContent = `${pctOf(totalProtein * 4)}%`;
+      $('pctCarbs').textContent = `${pctOf(totalCarbs * 4)}%`;
+      $('pctFat').textContent = `${pctOf(totalFat * 9)}%`;
+
+      $('dateLabel').textContent = formatDateLabel(selectedDate);
+      $('nextDayBtn').disabled = selectedDate >= todayISO();
+      $('foodSectionTitle').textContent = selectedDate === todayISO() ? 'Mai étkezések' : `Étkezések – ${formatDateLabel(selectedDate)}`;
     };
+
+    const renderWater = () => {
+      const ml = getWater();
+      $('waterStats').textContent = `${(ml / 1000).toFixed(2).replace(/\.?0+$/, '')} / ${(WATER_GOAL / 1000)} l`;
+      $('waterFill').style.width = Math.min(100, ml / WATER_GOAL * 100) + '%';
+      const glasses = $('waterGlasses');
+      const total = WATER_GOAL / WATER_STEP;
+      const filled = Math.floor(ml / WATER_STEP);
+      glasses.innerHTML = Array.from({ length: Math.max(total, filled) }, (_, i) =>
+        `<span class="glass ${i < filled ? 'on' : ''}">💧</span>`).join('');
+    };
+
+    const renderWeek = () => {
+      const wrap = $('weekChart');
+      const all = getAllFoods();
+      const target = getTarget();
+      const days = [];
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(); d.setDate(d.getDate() - i);
+        const iso = toISO(d);
+        const kcal = all.filter(f => f.date === iso).reduce((a, f) => a + Number(f.calories), 0);
+        days.push({ iso, kcal, label: d.toLocaleDateString('hu-HU', { weekday: 'short' }) });
+      }
+      const max = Math.max(target * 1.15, ...days.map(d => d.kcal));
+      wrap.innerHTML = days.map(d => `
+        <button type="button" class="week-col ${d.iso === selectedDate ? 'sel' : ''}" data-date="${d.iso}" title="${d.kcal} kcal">
+          <span class="week-val">${d.kcal || ''}</span>
+          <span class="week-bar-wrap"><span class="week-bar ${d.kcal > target ? 'over' : ''}" style="height:${d.kcal / max * 100}%"></span></span>
+          <span class="week-lbl">${d.label}</span>
+        </button>`).join('');
+      const vals = days.filter(d => d.kcal > 0);
+      $('weekAvg').textContent = vals.length
+        ? `7 napos átlag: ${Math.round(vals.reduce((a, d) => a + d.kcal, 0) / vals.length).toLocaleString()} kcal / nap`
+        : 'Még nincs adat az elmúlt 7 napból.';
+    };
+
+    const renderAll = () => { renderFoods(); renderWater(); renderWeek(); };
+
+    // ---------- Étel hozzáadása / törlés ----------
+    const addFoodEntry = (entry) => {
+      const all = getAllFoods();
+      all.push({ id: newId(), date: selectedDate, image: '', ...entry });
+      saveAllFoods(all);
+      renderAll();
+    };
+
+    foodList.addEventListener('click', (e) => {
+      const btn = e.target.closest('.delete-food-btn');
+      if (!btn) return;
+      saveAllFoods(getAllFoods().filter(f => f.id !== btn.dataset.id));
+      renderAll();
+    });
 
     if (editTargetBtn) {
       editTargetBtn.addEventListener('click', () => {
-        const currentTarget = getTarget();
-        const newTarget = prompt('Add meg az új napi kalóriakeretet (kcal):', currentTarget);
+        const newTarget = prompt('Add meg az új napi kalóriakeretet (kcal):', getTarget());
         if (newTarget && !isNaN(newTarget) && Number(newTarget) > 0) {
           localStorage.setItem(targetStorageKey, newTarget);
-          renderFoods();
+          renderAll();
         }
       });
     }
-
-    const deleteFood = (index) => {
-      const foods = getFoods();
-      foods.splice(index, 1);
-      localStorage.setItem(foodStorageKey, JSON.stringify(foods));
-      renderFoods();
-    };
 
     if (openFoodModalBtn && closeFoodModalBtn && foodModal) {
       openFoodModalBtn.addEventListener('click', () => foodModal.classList.add('open'));
@@ -199,28 +346,154 @@ document.addEventListener('DOMContentLoaded', () => {
     if (addFoodForm) {
       addFoodForm.addEventListener('submit', (e) => {
         e.preventDefault();
-
-        const category = document.getElementById('food-category').value;
-        const name = document.getElementById('food-name').value.trim();
-        const calories = document.getElementById('food-calories').value;
-        const image = document.getElementById('food-image').value.trim();
-        const protein = document.getElementById('food-protein').value || 0;
-        const carbs = document.getElementById('food-carbs').value || 0;
-        const fat = document.getElementById('food-fat').value || 0;
-
-        const foods = getFoods();
-        foods.push({ category, name, calories, image, protein, carbs, fat });
-
-        localStorage.setItem(foodStorageKey, JSON.stringify(foods));
-
+        const entry = {
+          category: $('food-category').value,
+          name: $('food-name').value.trim(),
+          calories: Number($('food-calories').value),
+          image: $('food-image').value.trim(),
+          protein: Number($('food-protein').value) || 0,
+          carbs: Number($('food-carbs').value) || 0,
+          fat: Number($('food-fat').value) || 0
+        };
+        const saveBox = $('food-save-recipe');
+        if (saveBox && saveBox.checked) {
+          const customs = getCustomRecipes();
+          customs.push({ id: 'c_' + newId(), emoji: '⭐', time: '', ingredients: 'Saját recept', custom: true, ...entry });
+          saveCustomRecipes(customs);
+        }
+        addFoodEntry(entry);
         addFoodForm.reset();
         foodModal.classList.remove('open');
-
-        renderFoods();
       });
     }
 
-    renderFoods();
+    // ---------- Receptkönyv ----------
+    const recipeModal = $('recipeModal');
+    const recipeListEl = $('recipeList');
+
+    const renderRecipes = () => {
+      const q = recipeQuery.trim().toLowerCase();
+      const list = getAllRecipes().filter(r => {
+        const catOk = recipeFilter === 'Mind' || (recipeFilter === 'Saját' ? r.custom : r.category === recipeFilter);
+        return catOk && (!q || r.name.toLowerCase().includes(q) || (r.ingredients || '').toLowerCase().includes(q));
+      });
+
+      document.querySelectorAll('#recipeChips .chip').forEach(c => c.classList.toggle('active', c.dataset.cat === recipeFilter));
+
+      if (!list.length) {
+        recipeListEl.innerHTML = `<p class="empty-msg">Nincs találat.</p>`;
+        return;
+      }
+
+      recipeListEl.innerHTML = list.map(r => `
+        <div class="recipe-item">
+          <div class="recipe-top">
+            <div class="food-img food-emoji">${esc(r.emoji || '🍽️')}</div>
+            <div class="group-meta recipe-meta">
+              <h3>${esc(r.name)}</h3>
+              <p>${esc(r.category)} · ${r.calories} kcal · P ${r.protein}g · Ch ${r.carbs}g · Zs ${r.fat}g</p>
+            </div>
+          </div>
+          <details class="recipe-details">
+            <summary>Hozzávalók${r.time ? ' · ' + esc(r.time) : ''}</summary>
+            <p>${esc(r.ingredients || '')}</p>
+          </details>
+          <div class="recipe-actions">
+            <select class="portion" data-id="${esc(r.id)}" aria-label="Adag">
+              <option value="0.5">½ adag</option>
+              <option value="1" selected>1 adag</option>
+              <option value="1.5">1½ adag</option>
+              <option value="2">2 adag</option>
+            </select>
+            <button type="button" class="btn-primary btn-sm add-recipe-btn" data-id="${esc(r.id)}">Hozzáadás</button>
+            ${r.custom ? `<button type="button" class="btn-join btn-danger del-recipe-btn" data-id="${esc(r.id)}">Törlés</button>` : ''}
+          </div>
+        </div>`).join('');
+    };
+
+    if (recipeModal) {
+      $('openRecipeModalBtn').addEventListener('click', () => { renderRecipes(); recipeModal.classList.add('open'); });
+      $('closeRecipeModalBtn').addEventListener('click', () => recipeModal.classList.remove('open'));
+      recipeModal.addEventListener('click', (e) => { if (e.target === recipeModal) recipeModal.classList.remove('open'); });
+
+      $('recipeSearch').addEventListener('input', (e) => { recipeQuery = e.target.value; renderRecipes(); });
+      $('recipeChips').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chip');
+        if (!chip) return;
+        recipeFilter = chip.dataset.cat;
+        renderRecipes();
+      });
+
+      recipeListEl.addEventListener('click', (e) => {
+        const addBtn = e.target.closest('.add-recipe-btn');
+        const delBtn = e.target.closest('.del-recipe-btn');
+
+        if (addBtn) {
+          const r = getAllRecipes().find(x => x.id === addBtn.dataset.id);
+          if (!r) return;
+          const sel = addBtn.parentElement.querySelector('.portion');
+          const p = Number(sel.value) || 1;
+          const portionLabel = { '0.5': '½', '1.5': '1½', '2': '2' }[sel.value];
+          addFoodEntry({
+            category: MEALS.includes(r.category) ? r.category : 'Ebéd',
+            name: p === 1 ? r.name : `${r.name} (${portionLabel} adag)`,
+            emoji: r.emoji,
+            calories: Math.round(r.calories * p),
+            protein: Math.round(r.protein * p),
+            carbs: Math.round(r.carbs * p),
+            fat: Math.round(r.fat * p)
+          });
+          addBtn.textContent = '✓ Hozzáadva';
+          setTimeout(() => { addBtn.textContent = 'Hozzáadás'; }, 1200);
+        }
+
+        if (delBtn) {
+          if (!confirm('Biztosan törlöd ezt a saját receptet?')) return;
+          saveCustomRecipes(getCustomRecipes().filter(x => x.id !== delBtn.dataset.id));
+          renderRecipes();
+        }
+      });
+    }
+
+    // ---------- Víz, napváltás, heti diagram ----------
+    $('waterAddBtn').addEventListener('click', () => { setWater(getWater() + WATER_STEP); renderWater(); });
+    $('waterSubBtn').addEventListener('click', () => { setWater(getWater() - WATER_STEP); renderWater(); });
+    $('prevDayBtn').addEventListener('click', () => shiftDate(-1));
+    $('nextDayBtn').addEventListener('click', () => shiftDate(1));
+    $('todayBtn').addEventListener('click', () => { selectedDate = todayISO(); renderAll(); });
+    $('weekChart').addEventListener('click', (e) => {
+      const col = e.target.closest('.week-col');
+      if (!col) return;
+      selectedDate = col.dataset.date;
+      renderAll();
+    });
+
+    // ---------- Előző napi étkezések másolása ----------
+    $('copyYesterdayBtn').addEventListener('click', () => {
+      const d = fromISO(selectedDate); d.setDate(d.getDate() - 1);
+      const prev = getAllFoods().filter(f => f.date === toISO(d));
+      if (!prev.length) { alert('Az előző napon nincs rögzített étel.'); return; }
+      if (!confirm(`${prev.length} étel másolása az előző napról?`)) return;
+      const all = getAllFoods();
+      prev.forEach(f => all.push({ ...f, id: newId(), date: selectedDate }));
+      saveAllFoods(all);
+      renderAll();
+    });
+
+    // ---------- Napi adatok exportálása ----------
+    $('exportBtn').addEventListener('click', () => {
+      const rows = [['Dátum', 'Étkezés', 'Étel', 'kcal', 'Fehérje (g)', 'Szénhidrát (g)', 'Zsír (g)']];
+      getAllFoods().sort((a, b) => a.date.localeCompare(b.date)).forEach(f =>
+        rows.push([f.date, f.category, `"${String(f.name).replace(/"/g, '""')}"`, f.calories, f.protein || 0, f.carbs || 0, f.fat || 0]));
+      const blob = new Blob(['\ufeff' + rows.map(r => r.join(';')).join('\n')], { type: 'text/csv;charset=utf-8' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'kaloria-naplo.csv';
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    renderAll();
   }
 
   // ==========================================
@@ -346,105 +619,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Továbbfejlesztett és rugalmas szövegfeldolgozó
-  const getPresetSchedule = (type, customText) => {
-    if (type === 'fullbody') {
-      return [
-        { day: 'Hétfő', name: 'Full Body A (Mell, Láb, Hát)', details: ['Guggolás rúddal: 4x8', 'Fekvenyomás: 4x8', 'Döntött törzsű evezés: 4x10', 'Vállból nyomás: 3x10'] },
-        { day: 'Kedd', name: 'Pihenőnap', details: ['Regeneráció, könnyű séta'] },
-        { day: 'Szerda', name: 'Full Body B (Erőfókusz)', details: ['Felhúzás: 4x6', 'Ferde pados nyomás: 4x8', 'Lehúzás csigán: 4x10', 'Bicepsz & Tricepsz: 3x12'] },
-        { day: 'Csütörtök', name: 'Pihenőnap', details: ['Pihenés'] },
-        { day: 'Péntek', name: 'Full Body C (Volumen)', details: ['Lábtolás: 4x12', 'Tolódzkodás: 3x10', 'T-rúdos evezés: 4x10', 'Oldalemelés: 4x12'] },
-        { day: 'Szombat', name: 'Pihenőnap / Aktiválás', details: ['Könnyű kardió, nyújtás'] },
-        { day: 'Vasárnap', name: 'Pihenőnap', details: ['Teljes pihenőnap'] }
-      ];
-    } else if (type === 'ppl') {
-      return [
-        { day: 'Hétfő', name: 'Push (Mell, Váll, Tricepsz)', details: ['Fekvenyomás: 4x8', 'Mellről nyomás: 3x10', 'Kézi súlyzós tárogatás: 3x12', 'Tricepsz letolás: 4x12'] },
-        { day: 'Kedd', name: 'Pull (Hát, Bicepsz, Hátsó váll)', details: ['Húzódzkodás / Mellhez húzás: 4x8', 'Evezés kézi súlyzóval: 4x10', 'Facepull: 3x15', 'Bicepsz franciarúddal: 3x12'] },
-        { day: 'Szerda', name: 'Legs (Láb, Vádli, Has)', details: ['Guggolás: 4x8', 'Román felhúzás: 4x10', 'Lábnyújtás & Hajítás: 3x12', 'Vádli állva: 4x15'] },
-        { day: 'Csütörtök', name: 'Pihenőnap', details: ['Regenerálódás'] },
-        { day: 'Péntek', name: 'Push / Pull Kevert', details: ['Ferde pados nyomás: 4x10', 'Döntött törzsű evezés: 4x10', 'Oldalemelés: 4x15'] },
-        { day: 'Szombat', name: 'Láb & Has', details: ['Lábtolás: 4x12', 'Kitörések: 3x10/láb', 'Hasprés csigán: 4x15'] },
-        { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
-      ];
-    } else {
-      const days = ['Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat', 'Vasárnap'];
-      
-      // Feldolgozzuk a beírt szöveget: szétbontjuk vesszők vagy új sorok szerint
-      let rawItems = customText
-        ? customText.split(/[\n,]+/).map(item => item.trim()).filter(item => item.length > 0)
-        : [];
-
-      // Ha nincs megadva semmi, akkor alapértelmezett üzenet
-      if (rawItems.length === 0) {
-        rawItems = ['Guggolás 4x8', 'Fekvenyomás 4x8', 'Evezés 4x10'];
-      }
-
-      // Ellenőrizzük, hogy vannak-e megadva specifikus napnevek (pl. Hétfő: Guggolás)
-      const hasDayNames = rawItems.some(item => days.some(d => item.toLowerCase().startsWith(d.toLowerCase())));
-
-      if (hasDayNames) {
-        return days.map((dayName, idx) => {
-          const matchedItems = rawItems.filter(item => item.toLowerCase().startsWith(dayName.toLowerCase()));
-          let details = matchedItems.map(item => item.replace(new RegExp(`^${dayName}:?`, 'i'), '').trim()).filter(i => i !== '');
-
-          if (details.length === 0) {
-            return {
-              day: dayName,
-              name: idx % 2 === 1 ? 'Pihenőnap' : 'Aktív pihenés',
-              details: [idx % 2 === 1 ? 'Pihenés és regeneráció' : 'Séta, könnyű kardió']
-            };
-          }
-
-          return {
-            day: dayName,
-            name: `${dayName} Edzés`,
-            details: details
-          };
-        });
-      } else {
-        // Ha csak egy sima lista lett beírva (pl. "Guggolás 4x8, Fekvenyomás 4x8, Evezés 3x10")
-        // Akkor az edzésnapokra szétdobjuk a megadott gyakorlatokat
-        return days.map((dayName, idx) => {
-          if (idx === 0 || idx === 2 || idx === 4) { // Hétfő, Szerda, Péntek edzésnap
-            return {
-              day: dayName,
-              name: `${dayName} Edzés`,
-              details: rawItems
-            };
-          }
-          return {
-            day: dayName,
-            name: 'Pihenőnap',
-            details: ['Pihenés és regeneráció']
-          };
-        });
-      }
-    }
-  };
-
+  // Dinamikus edzéstervek lekezelése (alapértelmezett + felhasználó által mentettek)
   const getCustomPlans = () => JSON.parse(localStorage.getItem('customWorkoutPlans')) || {};
   const getAllWorkoutPlans = () => ({ ...defaultWorkoutPlans, ...getCustomPlans() });
 
-  // DOM Elemek kiválasztása
+  // ÚJ TERV LÉTREHOZÁSA (WORKOUT.HTML)
   const openNewPlanModalBtn = document.getElementById('openNewPlanModalBtn');
   const closeNewPlanModalBtn = document.getElementById('closeNewPlanModalBtn');
   const newPlanModal = document.getElementById('newPlanModal');
   const createPlanForm = document.getElementById('createPlanForm');
   const workoutCardsContainer = document.getElementById('workoutCardsContainer');
-  const planSplitSelect = document.getElementById('plan-split');
-  const customExercisesGroup = document.getElementById('custom-exercises-group');
-
-  if (planSplitSelect && customExercisesGroup) {
-    planSplitSelect.addEventListener('change', (e) => {
-      if (e.target.value === 'custom') {
-        customExercisesGroup.style.display = 'block';
-      } else {
-        customExercisesGroup.style.display = 'none';
-      }
-    });
-  }
 
   if (openNewPlanModalBtn && closeNewPlanModalBtn && newPlanModal) {
     openNewPlanModalBtn.addEventListener('click', () => newPlanModal.classList.add('open'));
@@ -456,6 +640,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const customPlans = getCustomPlans();
     Object.keys(customPlans).forEach(id => {
+      // Elkerüljük a duplikációt, ha már kirajzoltuk
       if (document.getElementById(`custom-plan-card-${id}`)) return;
 
       const plan = customPlans[id];
@@ -493,8 +678,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = document.getElementById('plan-title').value.trim();
       const subtitle = document.getElementById('plan-subtitle').value.trim();
       const description = document.getElementById('plan-desc').value.trim();
-      const splitType = document.getElementById('plan-split').value;
-      const customExercises = document.getElementById('plan-custom-exercises')?.value || '';
       const image = document.getElementById('plan-image').value.trim();
 
       const planId = 'custom_' + Date.now();
@@ -504,7 +687,15 @@ document.addEventListener('DOMContentLoaded', () => {
         subtitle,
         description,
         image: image || 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
-        schedule: getPresetSchedule(splitType, customExercises)
+        schedule: [
+          { day: 'Hétfő', name: 'Egyéni edzés nap A', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Kedd', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Szerda', name: 'Egyéni edzés nap B', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Csütörtök', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Péntek', name: 'Egyéni edzés nap C', details: ['Gyakorlatok hozzáadása folyamatban'] },
+          { day: 'Szombat', name: 'Pihenőnap', details: ['Pihenés'] },
+          { day: 'Vasárnap', name: 'Pihenőnap', details: ['Pihenés'] }
+        ]
       };
 
       const customPlans = getCustomPlans();
@@ -512,13 +703,13 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('customWorkoutPlans', JSON.stringify(customPlans));
 
       createPlanForm.reset();
-      if (customExercisesGroup) customExercisesGroup.style.display = 'none';
       newPlanModal.classList.remove('open');
 
       renderCustomWorkoutCards();
     });
   }
 
+  // Meglévő egyedi tervek betöltése
   renderCustomWorkoutCards();
 
   // RÉSZLETES NÉZET KEZELÉSE (WORKOUT-DETAIL.HTML)
@@ -530,6 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const allPlans = getAllWorkoutPlans();
     const plan = allPlans[planId] || allPlans['1'];
 
+    // Naptárszerű kártyák generálása
     let calendarCardsHTML = (plan.schedule || []).map(item => {
       const isRest = item.name.toLowerCase().includes('pihenő') || item.name.toLowerCase().includes('séta');
       return `
@@ -585,7 +777,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
 
       <section style="margin-top: 32px;">
-        <div class="section-header" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Heti Beosztás</div>
+        <div class="section-header" style="font-size: 1.3rem; font-weight: 700; margin-bottom: 16px;">Heti Beosztás </div>
         <div style="
           display: grid;
           grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

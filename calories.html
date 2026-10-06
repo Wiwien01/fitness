@@ -41,6 +41,50 @@
     }
     .macro-title { color: var(--muted); margin-bottom: 4px; font-size: 0.75rem; }
     .macro-val { font-weight: 600; color: var(--text); }
+
+    .food-emoji { display: grid; place-items: center; font-size: 1.6rem; flex-shrink: 0; }
+    .macro-pct { color: var(--muted); font-weight: 400; font-size: 0.72rem; margin-left: 4px; }
+    .progress-track { height: 10px; background: var(--bg); border: 1px solid var(--border); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0; background: var(--primary); border-radius: 99px; transition: width 0.3s; }
+    .progress-fill.over { background: #ef4444; }
+    .progress-label { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 4px; }
+    .day-nav { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .day-nav .label { font-weight: 600; text-transform: capitalize; }
+    .day-nav .icon-btn:disabled { opacity: 0.3; cursor: default; }
+    .meal-head { display: flex; justify-content: space-between; font-size: 0.8rem; font-weight: 600; color: var(--primary); margin-top: 6px; }
+    .meal-head:first-child { margin-top: 0; }
+    .btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .btn-row > button { flex: 1; min-width: 150px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+    .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .card-top h3 { font-size: 1rem; }
+    .card-top span { color: var(--muted); font-size: 0.85rem; }
+    .water-fill-track { height: 8px; background: var(--bg); border-radius: 99px; overflow: hidden; margin-bottom: 12px; }
+    #waterFill { height: 100%; width: 0; background: #38bdf8; transition: width 0.3s; }
+    #waterGlasses { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 14px; min-height: 24px; }
+    .glass { opacity: 0.2; font-size: 1.1rem; }
+    .glass.on { opacity: 1; }
+    .week-chart { display: flex; gap: 8px; align-items: flex-end; }
+    .week-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 1px solid transparent; border-radius: 8px; padding: 4px 2px; cursor: pointer; color: var(--muted); }
+    .week-col.sel { border-color: var(--primary); }
+    .week-bar-wrap { height: 90px; width: 100%; display: flex; align-items: flex-end; justify-content: center; }
+    .week-bar { width: 60%; min-height: 2px; background: var(--primary); border-radius: 4px 4px 0 0; }
+    .week-bar.over { background: #ef4444; }
+    .week-val { font-size: 0.65rem; min-height: 12px; }
+    .week-lbl { font-size: 0.7rem; text-transform: capitalize; }
+    .modal-panel.wide { max-width: 560px; max-height: 88vh; overflow-y: auto; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+    .chip { background: var(--bg); border: 1px solid var(--border); color: var(--muted); padding: 6px 12px; border-radius: 99px; font-size: 0.8rem; cursor: pointer; }
+    .chip.active { background: var(--primary); color: #052e16; border-color: var(--primary); font-weight: 600; }
+    .recipe-item { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; margin-bottom: 10px; }
+    .recipe-top { display: flex; gap: 12px; align-items: center; }
+    .recipe-details { margin: 8px 0; font-size: 0.8rem; color: var(--muted); }
+    .recipe-details summary { cursor: pointer; }
+    .recipe-details p { margin-top: 4px; line-height: 1.4; }
+    .recipe-actions { display: flex; gap: 8px; align-items: center; }
+    .portion { background: var(--surface); border: 1px solid var(--border); color: var(--text); padding: 8px; border-radius: 8px; font-size: 0.8rem; }
+    #recipeSearch { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 8px; font-size: 0.9rem; outline: none; }
+    #recipeSearch:focus { border-color: var(--primary); }
   </style>
 </head>
 <body>
@@ -89,6 +133,13 @@
       </header>
 
       <main>
+        <!-- Napváltó -->
+        <div class="day-nav">
+          <button class="icon-btn" id="prevDayBtn" aria-label="Előző nap"><i data-lucide="chevron-left"></i></button>
+          <button class="icon-btn" id="todayBtn" style="color: var(--text);"><span class="label" id="dateLabel">Ma</span></button>
+          <button class="icon-btn" id="nextDayBtn" aria-label="Következő nap"><i data-lucide="chevron-right"></i></button>
+        </div>
+
         <!-- Napi összefoglaló kártya -->
         <section class="hero-box">
           <div style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -101,9 +152,15 @@
             </button>
           </div>
           
-          <div class="action-row" style="margin-top: 16px;">
-            <button class="btn-primary" id="openFoodModalBtn">
-              <i data-lucide="plus"></i> Étel hozzáadása
+          <div class="progress-track" style="margin-top: -8px;"><div class="progress-fill" id="calorieProgress"></div></div>
+          <div class="progress-label" id="calorieProgressLabel">0%</div>
+
+          <div class="btn-row" style="margin-top: 16px;">
+            <button class="btn-primary" id="openRecipeModalBtn">
+              <i data-lucide="book-open"></i> Receptek
+            </button>
+            <button class="btn-secondary" id="openFoodModalBtn">
+              <i data-lucide="plus"></i> Saját étel
             </button>
           </div>
 
@@ -111,25 +168,46 @@
           <div class="macro-bar-container">
             <div class="macro-box">
               <div class="macro-title">Fehérje</div>
-              <div class="macro-val" id="totalProtein">0 g</div>
+              <div class="macro-val"><span id="totalProtein">0 g</span><span class="macro-pct" id="pctProtein">0%</span></div>
             </div>
             <div class="macro-box">
               <div class="macro-title">Szénhidrát</div>
-              <div class="macro-val" id="totalCarbs">0 g</div>
+              <div class="macro-val"><span id="totalCarbs">0 g</span><span class="macro-pct" id="pctCarbs">0%</span></div>
             </div>
             <div class="macro-box">
               <div class="macro-title">Zsír</div>
-              <div class="macro-val" id="totalFat">0 g</div>
+              <div class="macro-val"><span id="totalFat">0 g</span><span class="macro-pct" id="pctFat">0%</span></div>
             </div>
           </div>
         </section>
 
         <!-- Étkezések listája -->
         <section>
-          <div class="section-header">Mai étkezések</div>
+          <div class="section-header" id="foodSectionTitle">Mai étkezések</div>
           <div class="group-list" id="foodList">
             <!-- Dinamikusan töltődik fel -->
           </div>
+          <div class="btn-row" style="margin-top: 14px;">
+            <button class="btn-secondary" id="copyYesterdayBtn" style="font-size: 0.8rem;"><i data-lucide="copy"></i> Előző nap másolása</button>
+            <button class="btn-secondary" id="exportBtn" style="font-size: 0.8rem;"><i data-lucide="download"></i> Export (CSV)</button>
+          </div>
+        </section>
+
+        <!-- Vízfogyasztás -->
+        <section class="card">
+          <div class="card-top"><h3>Vízfogyasztás</h3><span id="waterStats">0 / 2,5 l</span></div>
+          <div class="water-fill-track"><div id="waterFill"></div></div>
+          <div id="waterGlasses"></div>
+          <div class="btn-row">
+            <button class="btn-secondary" id="waterSubBtn">− 250 ml</button>
+            <button class="btn-primary" id="waterAddBtn">+ 250 ml</button>
+          </div>
+        </section>
+
+        <!-- Heti áttekintés -->
+        <section class="card">
+          <div class="card-top"><h3>Elmúlt 7 nap</h3><span id="weekAvg"></span></div>
+          <div class="week-chart" id="weekChart"></div>
         </section>
       </main>
     </div>
@@ -187,10 +265,34 @@
           </div>
         </div>
 
+        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">
+          <input type="checkbox" id="food-save-recipe"> Mentés a saját receptjeim közé
+        </label>
+
         <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
           Hozzáadás
         </button>
       </form>
+    </div>
+  </div>
+
+  <!-- Receptkönyv Modál -->
+  <div class="modal-backdrop" id="recipeModal">
+    <div class="modal-panel wide">
+      <div class="modal-head" style="margin-bottom: 12px;">
+        <h3>Receptek</h3>
+        <button class="icon-btn" id="closeRecipeModalBtn" aria-label="Bezárás"><i data-lucide="x"></i></button>
+      </div>
+      <input type="search" id="recipeSearch" placeholder="Keresés névre vagy hozzávalóra...">
+      <div class="chips" id="recipeChips">
+        <button type="button" class="chip active" data-cat="Mind">Mind</button>
+        <button type="button" class="chip" data-cat="Reggeli">Reggeli</button>
+        <button type="button" class="chip" data-cat="Ebéd">Ebéd</button>
+        <button type="button" class="chip" data-cat="Uzsonna">Uzsonna</button>
+        <button type="button" class="chip" data-cat="Vacsora">Vacsora</button>
+        <button type="button" class="chip" data-cat="Saját">⭐ Saját</button>
+      </div>
+      <div id="recipeList"></div>
     </div>
   </div>
 
