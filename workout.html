@@ -13,14 +13,15 @@
   <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
 </head>
 <body>
+  <!-- FELSŐ FEJLÉC ÜDVÖZLÉSSEL -->
   <header>
-    <div class="user-profile">
-      <div class="avatar">KT</div>
+    <a href="profile.html" class="user-profile" style="text-decoration: none; color: inherit;">
+      <div class="avatar top-avatar">--</div>
       <div class="user-info">
         <span class="greeting">Üdv újra,</span>
-        <span class="user-name">Kovács Tamás</span>
+        <span class="user-name top-user-name">Felhasználó</span>
       </div>
-    </div>
+    </a>
     
     <div style="display: flex; gap: 8px;">
       <button class="icon-btn" aria-label="Értesítések">
@@ -172,7 +173,7 @@
     </div>
   </div>
 
-<!-- Új terv létrehozása Modál -->
+  <!-- Új terv létrehozása Modál -->
   <div class="modal-backdrop" id="newPlanModal">
     <div class="modal-panel" style="max-height: 90vh; overflow-y: auto;">
       <div class="modal-head">
