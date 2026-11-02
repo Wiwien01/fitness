@@ -1,10 +1,9 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="hu">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitnessProgress - Közösség</title>
+  <title>Közösség - FitnessProgress</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,26 +11,141 @@
   <link rel="stylesheet" href="common.css">
   <link rel="stylesheet" href="mobile.css" media="(max-width: 767px)">
   <link rel="stylesheet" href="desktop.css" media="(min-width: 768px)">
+
+  <style>
+    /* Csoportos felület extra stílusai */
+    .group-header-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .group-info h2 { font-size: 1.3rem; margin-bottom: 4px; }
+    .group-info p { color: var(--muted); font-size: 0.85rem; margin-bottom: 8px; }
+    .group-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34, 197, 94, 0.15);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 767px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+
+    .card-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+    }
+    .card-box h3 {
+      font-size: 1rem;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text);
+    }
+
+    /* Tagok listája */
+    .member-list { display: flex; flex-direction: column; gap: 10px; }
+    .member-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg);
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+    .member-user { display: flex; align-items: center; gap: 10px; }
+    .member-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--primary);
+      display: grid;
+      place-items: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+    .status-check { color: var(--primary); }
+    .status-pending { color: var(--muted); font-size: 0.75rem; }
+
+    /* Chat / Üzenőfal */
+    .chat-box {
+      display: flex;
+      flex-direction: column;
+      height: 260px;
+    }
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-right: 6px;
+      margin-bottom: 12px;
+    }
+    .chat-msg {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+    }
+    .chat-author { font-weight: 600; font-size: 0.75rem; color: var(--primary); margin-bottom: 2px; }
+    .chat-input-row { display: flex; gap: 8px; }
+    .chat-input-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- FELSŐ FEJLÉC ÜDVÖZLÉSSEL -->
   <header>
-  <div class="user-profile">
-    <div class="avatar">--</div>
-    <div class="user-info">
-      <span class="greeting">Üdv újra,</span>
-      <span class="user-name">Felhasználó</span>
+    <a href="profile.html" class="user-profile" style="text-decoration: none; color: inherit;">
+      <div class="avatar top-avatar">--</div>
+      <div class="user-info">
+        <span class="greeting">Üdv újra,</span>
+        <span class="user-name top-user-name">Felhasználó</span>
+      </div>
+    </a>
+    
+    <div style="display: flex; gap: 8px;">
+      <button class="icon-btn" aria-label="Értesítések">
+        <i data-lucide="bell"></i>
+      </button>
+      <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
+        <i data-lucide="log-out"></i>
+      </button>
     </div>
-  </div>
-  
-  <div style="display: flex; gap: 8px;">
-    <button class="icon-btn" aria-label="Értesítések">
-      <i data-lucide="bell"></i>
-    </button>
-    <button class="icon-btn logout-btn" aria-label="Kijelentkezés" title="Kijelentkezés">
-      <i data-lucide="log-out"></i>
-    </button>
-  </div>  
-</header>
+  </header>
 
   <div class="app-container">
     <nav class="navigation">
@@ -57,56 +171,136 @@
     </nav>
 
     <div class="main-wrapper">
-
       <main>
-        <section class="hero-box">
-          <h2>Még nem vagy csoportban</h2>
-          <p>A közös edzés segít a rendszerességben. Hozz létre egy csoportot a barátaidnak, vagy csatlakozz egy meglévőhöz.</p>
+        
+        <!-- ========================================== -->
+        <!-- 1. NÉZET: HA A FELHASZNÁLÓ MÉG NINCS CSOPORTBAN -->
+        <!-- ========================================== -->
+        <div id="noGroupView">
+          <section class="hero-box">
+            <h2>Még nem vagy csoportban</h2>
+            <p>A közös edzés segít a rendszerességben. Csatlakozz egy meglévő csapathoz, vagy hozz létre egy újat a saját szabályaitokkal!</p>
+            
+            <div class="action-row">
+              <button class="btn-primary" id="openModalBtn">
+                <i data-lucide="plus"></i> Új csoport
+              </button>
+              <button class="btn-secondary" id="joinCodeBtn">
+                <i data-lucide="key-round"></i> Meghívókód
+              </button>
+            </div>
+          </section>
+
+          <section style="margin-top: 24px;">
+            <div class="section-header">Ajánlott nyilvános csoportok</div>
+            <div class="group-list">
+              <div class="group-item">
+                <div class="group-meta">
+                  <h3>Súlyemelők Klubja</h3>
+                  <p>Közös terv: <strong>Push - Pull - Leg</strong> · 👥 8 tag</p>
+                </div>
+                <button class="btn-join">Csatlakozás</button>
+              </div>
+
+              <div class="group-item">
+                <div class="group-meta">
+                  <h3>Reggeli Harcosok</h3>
+                  <p>Közös terv: <strong>Full Body</strong> · 👥 5 tag</p>
+                </div>
+                <button class="btn-join">Csatlakozás</button>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- 2. NÉZET: HA A FELHASZNÁLÓ MÁR CSOPORTTAG -->
+        <!-- ========================================== -->
+        <div id="activeGroupView" style="display: none;">
           
-          <div class="action-row">
-            <button class="btn-primary" id="openModalBtn">
-              <i data-lucide="plus"></i> Új csoport
+          <!-- Csoport Fejléc -->
+          <section class="group-header-card">
+            <div class="group-info">
+              <span class="group-badge"><i data-lucide="dumbbell"></i> Közös terv: Push - Pull - Leg</span>
+              <h2 id="myGroupName" style="margin-top: 6px;">Teszt Csoport</h2>
+              <p id="myGroupDesc">A közös cél a maximális fejlődés!</p>
+            </div>
+            <button class="btn-secondary btn-danger" id="leaveGroupBtn" style="color: #ef4444; border-color: rgba(239, 68, 68, 0.3);">
+              <i data-lucide="log-out"></i> Kilépés
             </button>
-            <button class="btn-secondary">
-              <i data-lucide="key-round"></i> Meghívókód
-            </button>
+          </section>
+
+          <!-- Napi edzés állapota -->
+          <section class="card-box" style="margin-top: 16px;">
+            <h3><i data-lucide="calendar" style="color: var(--primary);"></i> Mai közös edzés: Push (Mell, Váll, Tricepsz)</h3>
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">
+              A csoportból mára <strong>2/3 tag</strong> fejezte be a gyakorlatokat.
+            </p>
+            <a href="workout.html" class="btn-primary" style="text-decoration: none; display: inline-flex;">
+              Mai edzés indítása <i data-lucide="arrow-right"></i>
+            </a>
+          </section>
+
+          <div class="grid-2col" style="margin-top: 16px;">
+            <!-- Tagok listája -->
+            <div class="card-box">
+              <h3><i data-lucide="users" style="color: var(--primary);"></i> Csapattagok</h3>
+              <div class="member-list">
+                <div class="member-item">
+                  <div class="member-user">
+                    <div class="member-avatar">KT</div>
+                    <span style="font-size: 0.88rem; font-weight: 500;">Kovács Tamás (Ti)</span>
+                  </div>
+                  <span class="status-check" title="Kész a mai edzés"><i data-lucide="check-circle-2"></i></span>
+                </div>
+
+                <div class="member-item">
+                  <div class="member-user">
+                    <div class="member-avatar">NÁ</div>
+                    <span style="font-size: 0.88rem; font-weight: 500;">Nagy Ádám</span>
+                  </div>
+                  <span class="status-check" title="Kész a mai edzés"><i data-lucide="check-circle-2"></i></span>
+                </div>
+
+                <div class="member-item">
+                  <div class="member-user">
+                    <div class="member-avatar">SZ</div>
+                    <span style="font-size: 0.88rem; font-weight: 500;">Szabó Zoltán</span>
+                  </div>
+                  <span class="status-pending">Még nem edzett</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Üzenőfal / Chat -->
+            <div class="card-box chat-box">
+              <h3><i data-lucide="message-square" style="color: var(--primary);"></i> Üzenőfal</h3>
+              <div class="chat-messages">
+                <div class="chat-msg">
+                  <div class="chat-author">Nagy Ádám</div>
+                  <div>Mai fekvenyomás megvolt, brutal jó volt! 💪</div>
+                </div>
+                <div class="chat-msg">
+                  <div class="chat-author">Kovács Tamás</div>
+                  <div>Király! Én délután megyek nyomni.</div>
+                </div>
+              </div>
+              <div class="chat-input-row">
+                <input type="text" placeholder="Írj a csoportnak...">
+                <button class="btn-primary" style="padding: 8px 12px;"><i data-lucide="send"></i></button>
+              </div>
+            </div>
           </div>
-        </section>
 
-        <section>
-          <div class="section-header">Ajánlott nyilvános csoportok</div>
-          <div class="group-list">
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>csoport1</h3>
-                <p>leírás</p>
-              </div>
-              <button class="btn-join">Csatlakozás</button>
-            </div>
+        </div>
 
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>csoport2</h3>
-                <p>leírás</p>
-              </div>
-              <button class="btn-join">Csatlakozás</button>
-            </div>
-
-            <div class="group-item">
-              <div class="group-meta">
-                <h3>csoport3</h3>
-                <p>leírás</p>
-              </div>
-              <button class="btn-join">Csatlakozás</button>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   </div>
 
+  <!-- Új csoport létrehozása Modál -->
   <div class="modal-backdrop" id="groupModal">
-    <div class="modal-panel">
+    <div class="modal-panel" style="max-height: 90vh; overflow-y: auto;">
       <div class="modal-head">
         <h3>Új csoport létrehozása</h3>
         <button class="icon-btn" id="closeModalBtn">
@@ -117,21 +311,65 @@
       <form id="createGroupForm">
         <div class="input-field">
           <label for="g-name">Csoport neve</label>
-          <input type="text" id="g-name" placeholder="pl. Hétvégi Futók" required>
+          <input type="text" id="g-name" placeholder="pl. Hétvégi Harcosok" required>
         </div>
 
         <div class="input-field">
-          <label for="g-desc">Leírás (szabadon választható)</label>
-          <textarea id="g-desc" rows="3" placeholder="Mi a csoport célja?"></textarea>
+          <label for="g-desc">Leírás</label>
+          <textarea id="g-desc" rows="2" placeholder="Mi a csoport célja?"></textarea>
         </div>
 
-        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
-          Létrehozás
+        <div class="input-field">
+          <label for="g-plan">Közös edzésterv kiválasztása</label>
+          <select id="g-plan" style="width: 100%; padding: 10px; border-radius: 8px; background: var(--bg); color: var(--text); border: 1px solid var(--border);">
+            <optgroup label="Alapértelmezett tervek">
+              <option value="1">Push - Pull - Leg</option>
+              <option value="2">Bro Split</option>
+              <option value="3">Upper - Lower</option>
+              <option value="5">Full Body</option>
+            </optgroup>
+            <optgroup label="Egyéni opció">
+              <option value="custom_new">+ Új edzésterv létrehozása a csoportnak</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Akkor jelenik meg, ha a "+ Új edzésterv létrehozása" van kiválasztva -->
+        <div id="newPlanGroupFields" style="display: none; border-top: 1px solid var(--border);  margin-top: 10px; padding-top: 10px;">
+          <div class="input-field">
+            <label for="g-custom-plan-title">Egyedi Edzésterv neve</label>
+            <input type="text" id="g-custom-plan-title" placeholder="pl. Saját Csoportos Terv">
+          </div>
+          <div class="input-field">
+            <label for="g-custom-exercises">Gyakorlatok (naponta elválasztva)</label>
+            <textarea id="g-custom-exercises" rows="3" placeholder="Hétfő: Guggolás 4x8, Fekvenyomás 4x8&#10;Szerda: Felhúzás 4x6"></textarea>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">
+          Csoport létrehozása
         </button>
       </form>
     </div>
   </div>
 
   <script src="script.js"></script>
+  <script>
+    // Dinamikus mezőkezelés az Új Csoport Modálban
+    document.addEventListener('DOMContentLoaded', () => {
+      const gPlanSelect = document.getElementById('g-plan');
+      const newPlanGroupFields = document.getElementById('newPlanGroupFields');
+
+      if (gPlanSelect && newPlanGroupFields) {
+        gPlanSelect.addEventListener('change', (e) => {
+          if (e.target.value === 'custom_new') {
+            newPlanGroupFields.style.display = 'block';
+          } else {
+            newPlanGroupFields.style.display = 'none';
+          }
+        });
+      }
+    });
+  </script>
 </body>
 </html>
