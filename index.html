@@ -199,7 +199,7 @@
                   <h3>Súlyemelők Klubja</h3>
                   <p>Közös terv: <strong>Push - Pull - Leg</strong> · 👥 8 tag</p>
                 </div>
-                <button class="btn-join">Csatlakozás</button>
+                <button class="btn-join" data-name="Súlyemelők Klubja" data-plan="1" data-desc="Közös Push - Pull - Leg edzések.">Csatlakozás</button>
               </div>
 
               <div class="group-item">
@@ -207,7 +207,7 @@
                   <h3>Reggeli Harcosok</h3>
                   <p>Közös terv: <strong>Full Body</strong> · 👥 5 tag</p>
                 </div>
-                <button class="btn-join">Csatlakozás</button>
+                <button class="btn-join" data-name="Reggeli Harcosok" data-plan="5" data-desc="Korai kelők közös Full Body edzése.">Csatlakozás</button>
               </div>
             </div>
           </section>
@@ -221,7 +221,7 @@
           <!-- Csoport Fejléc -->
           <section class="group-header-card">
             <div class="group-info">
-              <span class="group-badge"><i data-lucide="dumbbell"></i> Közös terv: Push - Pull - Leg</span>
+              <span class="group-badge"><i data-lucide="dumbbell"></i> <span id="myGroupPlan">Közös terv: Push - Pull - Leg</span></span>
               <h2 id="myGroupName" style="margin-top: 6px;">Teszt Csoport</h2>
               <p id="myGroupDesc">A közös cél a maximális fejlődés!</p>
             </div>
@@ -232,11 +232,9 @@
 
           <!-- Napi edzés állapota -->
           <section class="card-box" style="margin-top: 16px;">
-            <h3><i data-lucide="calendar" style="color: var(--primary);"></i> Mai közös edzés: Push (Mell, Váll, Tricepsz)</h3>
-            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;">
-              A csoportból mára <strong>2/3 tag</strong> fejezte be a gyakorlatokat.
-            </p>
-            <a href="workout.html" class="btn-primary" style="text-decoration: none; display: inline-flex;">
+            <h3><i data-lucide="calendar" style="color: var(--primary);"></i> <span id="groupTodayTitle">Mai közös edzés</span></h3>
+            <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 12px;" id="groupTodayText"></p>
+            <a href="workout.html" id="groupStartBtn" class="btn-primary" style="text-decoration: none; display: inline-flex;">
               Mai edzés indítása <i data-lucide="arrow-right"></i>
             </a>
           </section>
@@ -245,50 +243,17 @@
             <!-- Tagok listája -->
             <div class="card-box">
               <h3><i data-lucide="users" style="color: var(--primary);"></i> Csapattagok</h3>
-              <div class="member-list">
-                <div class="member-item">
-                  <div class="member-user">
-                    <div class="member-avatar">KT</div>
-                    <span style="font-size: 0.88rem; font-weight: 500;">Kovács Tamás (Ti)</span>
-                  </div>
-                  <span class="status-check" title="Kész a mai edzés"><i data-lucide="check-circle-2"></i></span>
-                </div>
-
-                <div class="member-item">
-                  <div class="member-user">
-                    <div class="member-avatar">NÁ</div>
-                    <span style="font-size: 0.88rem; font-weight: 500;">Nagy Ádám</span>
-                  </div>
-                  <span class="status-check" title="Kész a mai edzés"><i data-lucide="check-circle-2"></i></span>
-                </div>
-
-                <div class="member-item">
-                  <div class="member-user">
-                    <div class="member-avatar">SZ</div>
-                    <span style="font-size: 0.88rem; font-weight: 500;">Szabó Zoltán</span>
-                  </div>
-                  <span class="status-pending">Még nem edzett</span>
-                </div>
-              </div>
+              <div class="member-list" id="groupMemberList"></div>
             </div>
 
             <!-- Üzenőfal / Chat -->
             <div class="card-box chat-box">
               <h3><i data-lucide="message-square" style="color: var(--primary);"></i> Üzenőfal</h3>
-              <div class="chat-messages">
-                <div class="chat-msg">
-                  <div class="chat-author">Nagy Ádám</div>
-                  <div>Mai fekvenyomás megvolt, brutal jó volt! 💪</div>
-                </div>
-                <div class="chat-msg">
-                  <div class="chat-author">Kovács Tamás</div>
-                  <div>Király! Én délután megyek nyomni.</div>
-                </div>
-              </div>
-              <div class="chat-input-row">
-                <input type="text" placeholder="Írj a csoportnak...">
-                <button class="btn-primary" style="padding: 8px 12px;"><i data-lucide="send"></i></button>
-              </div>
+              <div class="chat-messages" id="groupChatMessages"></div>
+              <form class="chat-input-row" id="groupChatForm">
+                <input type="text" id="groupChatInput" placeholder="Írj a csoportnak..." autocomplete="off">
+                <button type="submit" class="btn-primary" style="padding: 8px 12px;"><i data-lucide="send"></i></button>
+              </form>
             </div>
           </div>
 

@@ -873,4 +873,168 @@ document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
     }
   }
+
+  // ==========================================
+  // 6. CSOPORT LÉTREHOZÁSA / CSATLAKOZÁS (INDEX.HTML)
+  // ==========================================
+  const noGroupView = document.getElementById('noGroupView');
+  const activeGroupView = document.getElementById('activeGroupView');
+
+  if (noGroupView && activeGroupView && currentUser) {
+    const groupKey = 'userGroup_' + currentUser.email;
+    const getGroup = () => JSON.parse(localStorage.getItem(groupKey)) || null;
+    const saveGroup = (g) => localStorage.setItem(groupKey, JSON.stringify(g));
+    const escapeHtml = (str) => String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const initialsOf = (name) => {
+      const p = name.trim().split(' ');
+      return (p.length >= 2 ? p[0][0] + p[p.length - 1][0] : (p[0][0] || '')).toUpperCase();
+    };
+
+    const myGroupName = document.getElementById('myGroupName');
+    const myGroupDesc = document.getElementById('myGroupDesc');
+    const myGroupPlan = document.getElementById('myGroupPlan');
+    const groupTodayTitle = document.getElementById('groupTodayTitle');
+    const groupTodayText = document.getElementById('groupTodayText');
+    const groupStartBtn = document.getElementById('groupStartBtn');
+    const groupMemberList = document.getElementById('groupMemberList');
+    const groupChatMessages = document.getElementById('groupChatMessages');
+    const groupChatForm = document.getElementById('groupChatForm');
+    const groupChatInput = document.getElementById('groupChatInput');
+    const createGroupForm = document.getElementById('createGroupForm');
+    const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+
+    const renderChat = (group) => {
+      groupChatMessages.innerHTML = (group.messages || []).length === 0
+        ? '<div class="chat-msg"><div style="color: var(--muted);">Még nincs üzenet. Írj elsőként!</div></div>'
+        : group.messages.map(m => `
+            <div class="chat-msg">
+              <div class="chat-author">${escapeHtml(m.author)}</div>
+              <div>${escapeHtml(m.text)}</div>
+            </div>`).join('');
+      groupChatMessages.scrollTop = groupChatMessages.scrollHeight;
+    };
+
+    const renderGroup = () => {
+      const group = getGroup();
+      if (!group) {
+        noGroupView.style.display = 'block';
+        activeGroupView.style.display = 'none';
+        return;
+      }
+
+      noGroupView.style.display = 'none';
+      activeGroupView.style.display = 'block';
+
+      myGroupName.textContent = group.name;
+      myGroupDesc.textContent = group.desc || 'A közös cél a maximális fejlődés!';
+
+      const plan = getAllWorkoutPlans()[group.planId];
+      const planTitle = plan ? plan.title : 'Egyéni terv';
+      myGroupPlan.textContent = 'Közös terv: ' + planTitle;
+
+      // Mai edzés a terv ütemezéséből
+      const todayIdx = (new Date().getDay() + 6) % 7; // hétfő = 0
+      const todayEntry = plan && Array.isArray(plan.schedule) ? plan.schedule[todayIdx] : null;
+      groupTodayTitle.textContent = todayEntry
+        ? 'Mai közös edzés: ' + todayEntry.name
+        : 'Mai közös edzés: ' + planTitle;
+      groupTodayText.textContent = todayEntry && Array.isArray(todayEntry.details)
+        ? todayEntry.details.join(' · ')
+        : 'Nézd meg a terv részleteit az edzés indításához.';
+      groupStartBtn.href = 'workout-detail.html?id=' + encodeURIComponent(group.planId);
+
+      groupMemberList.innerHTML = group.members.map(m => `
+        <div class="member-item">
+          <div class="member-user">
+            <div class="member-avatar">${escapeHtml(initialsOf(m.name))}</div>
+            <span style="font-size: 0.88rem; font-weight: 500;">${escapeHtml(m.name)}${m.email === currentUser.email ? ' (Ti)' : ''}</span>
+          </div>
+          <span class="status-pending">${m.role === 'admin' ? 'Alapító' : 'Tag'}</span>
+        </div>`).join('');
+
+      renderChat(group);
+      if (window.lucide) lucide.createIcons();
+    };
+
+    const buildGroup = (name, desc, planId) => ({
+      name,
+      desc,
+      planId,
+      members: [{ name: currentUser.name, email: currentUser.email, role: 'admin' }],
+      messages: []
+    });
+
+    // Új csoport létrehozása (alapértelmezett vagy egyéni edzéstervvel)
+    if (createGroupForm) {
+      createGroupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('g-name').value.trim();
+        const desc = document.getElementById('g-desc').value.trim();
+        let planId = document.getElementById('g-plan').value;
+
+        if (!name) return;
+
+        if (planId === 'custom_new') {
+          const customTitle = document.getElementById('g-custom-plan-title').value.trim() || (name + ' terv');
+          const customText = document.getElementById('g-custom-exercises').value;
+          planId = 'custom_' + Date.now();
+
+          const customPlans = getCustomPlans();
+          customPlans[planId] = {
+            title: customTitle,
+            subtitle: 'Csoportos edzésterv – ' + name,
+            description: desc || ('A(z) ' + name + ' csoport saját edzésterve.'),
+            image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
+            schedule: getPresetSchedule('custom', customText)
+          };
+          localStorage.setItem('customWorkoutPlans', JSON.stringify(customPlans));
+        }
+
+        saveGroup(buildGroup(name, desc, planId));
+
+        createGroupForm.reset();
+        const extraFields = document.getElementById('newPlanGroupFields');
+        if (extraFields) extraFields.style.display = 'none';
+        groupModal.classList.remove('open');
+
+        renderGroup();
+      });
+    }
+
+    // Csatlakozás nyilvános csoporthoz
+    document.querySelectorAll('.btn-join[data-name]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        saveGroup(buildGroup(btn.dataset.name, btn.dataset.desc || '', btn.dataset.plan));
+        renderGroup();
+      });
+    });
+
+    // Kilépés
+    if (leaveGroupBtn) {
+      leaveGroupBtn.addEventListener('click', () => {
+        if (!confirm('Biztosan kilépsz a csoportból?')) return;
+        localStorage.removeItem(groupKey);
+        renderGroup();
+      });
+    }
+
+    // Üzenőfal
+    if (groupChatForm) {
+      groupChatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = groupChatInput.value.trim();
+        const group = getGroup();
+        if (!text || !group) return;
+        group.messages = group.messages || [];
+        group.messages.push({ author: currentUser.name, text });
+        saveGroup(group);
+        groupChatInput.value = '';
+        renderChat(group);
+      });
+    }
+
+    renderGroup();
+  }
+
 });
