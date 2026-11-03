@@ -1,3 +1,115 @@
+// ==========================================
+// KALÓRIASZÁMÍTÓ (közös segédfüggvény – profil és kalória oldal használja)
+// Mifflin–St Jeor képlet + aktivitási szorzó + cél szerinti korrekció
+// ==========================================
+window.FitCalc = (() => {
+  const ACTIVITY = {
+    sedentary: { factor: 1.2,   label: 'Ülő életmód, alig mozgás' },
+    light:     { factor: 1.375, label: 'Könnyű aktivitás (heti 1–3 edzés)' },
+    moderate:  { factor: 1.55,  label: 'Mérsékelt aktivitás (heti 3–5 edzés)' },
+    high:      { factor: 1.725, label: 'Magas aktivitás (heti 6–7 edzés)' },
+    athlete:   { factor: 1.9,   label: 'Nagyon magas (napi kétszeri edzés / fizikai munka)' }
+  };
+
+  // Célonkénti kalóriakorrekció és fehérjeigény (g / testtömeg-kg)
+  const GOALS = {
+    'Izomtömeg-növelés':        { pct: 0.10,  protein: 1.8 },
+    'Testsúlycsökkentés':       { pct: -0.20, protein: 2.0 },
+    'Erőnövelés':               { pct: 0.05,  protein: 1.8 },
+    'Állóképesség fejlesztése': { pct: 0,     protein: 1.4 },
+    'Általános fittség':        { pct: 0,     protein: 1.6 }
+  };
+
+  const autoActivity = (workoutsPerWeek) => {
+    const w = Number(workoutsPerWeek) || 0;
+    if (w <= 1) return 'sedentary';
+    if (w <= 3) return 'light';
+    if (w <= 5) return 'moderate';
+    return 'high';
+  };
+
+  // p: { weight, height, age, sex ('male'|'female'), activity ('auto'|kulcs), workoutGoal, goal, targetWeight }
+  const compute = (p) => {
+    const weight = Number(p.weight);
+    const height = Number(p.height);
+    const age = Number(p.age);
+    const sex = p.sex;
+    if (!(weight > 0 && height > 0 && age >= 14 && age <= 100)) return null;
+    if (sex !== 'male' && sex !== 'female') return null;
+
+    const notes = [];
+    const bmi = weight / ((height / 100) ** 2);
+    const bmr = 10 * weight + 6.25 * height - 5 * age + (sex === 'male' ? 5 : -161);
+    const activityKey = ACTIVITY[p.activity] ? p.activity : autoActivity(p.workoutGoal);
+    const tdee = bmr * ACTIVITY[activityKey].factor;
+
+    const goalName = GOALS[p.goal] ? p.goal : 'Általános fittség';
+    const cfg = GOALS[goalName];
+    const target = Number(p.targetWeight) || 0;
+    let pct = cfg.pct;
+
+    if (age < 18) {
+      notes.push('18 év alatt a számítás csak tájékoztató jellegű, érdemes orvossal vagy dietetikussal egyeztetni.');
+    }
+
+    if (goalName === 'Testsúlycsökkentés') {
+      if (bmi < 18.5) {
+        pct = 0;
+        notes.push('A BMI-d már az alacsony tartományban van, ezért fogyókúra helyett fenntartó kalóriát javasolunk.');
+      } else if (target && target >= weight - 0.4) {
+        pct = 0;
+        notes.push('A céltestsúlyod nem alacsonyabb a jelenleginél, ezért fenntartó kalóriát javasolunk. Fogyáshoz állíts be alacsonyabb céltestsúlyt.');
+      } else if (target && weight - target <= 5) {
+        pct = -0.15; // közel a célhoz kíméletesebb deficit
+      }
+    }
+    if (goalName === 'Izomtömeg-növelés' && target && target < weight - 1) {
+      pct = 0;
+      notes.push('A céltestsúlyod alacsonyabb a jelenleginél, ezért tömegnövelő többlet helyett fenntartó kalóriát javasolunk.');
+    }
+
+    let kcal = tdee * (1 + pct);
+    const minKcal = sex === 'male' ? 1500 : 1200;
+    if (kcal < minKcal) {
+      kcal = minKcal;
+      notes.push(`A javaslat a biztonsági alsó határra (${minKcal} kcal) lett korlátozva.`);
+    }
+    kcal = Math.round(kcal / 50) * 50;
+
+    // Becsült heti változás (kb. 7700 kcal ≈ 1 kg testsúly) és idő a célig
+    const weeklyKg = (kcal - tdee) * 7 / 7700;
+    let weeks = null;
+    if (target && Math.abs(weeklyKg) >= 0.05) {
+      const need = target - weight;
+      if (need * weeklyKg > 0) weeks = Math.ceil(Math.abs(need / weeklyKg));
+    }
+
+    // Makrók: fehérje testsúly alapján, zsír a kalória 25%-a (min. 0,6 g/kg), a maradék szénhidrát
+    const protein = Math.round(cfg.protein * weight);
+    const fat = Math.max(Math.round(kcal * 0.25 / 9), Math.round(0.6 * weight));
+    const carbs = Math.max(0, Math.round((kcal - protein * 4 - fat * 9) / 4));
+
+    return {
+      bmr: Math.round(bmr),
+      tdee: Math.round(tdee),
+      activityKey,
+      activityLabel: ACTIVITY[activityKey].label,
+      goalName,
+      adjustPct: pct,
+      kcal,
+      weeklyKg,
+      weeks,
+      protein,
+      carbs,
+      fat,
+      bmi,
+      notes
+    };
+  };
+
+  return { compute, autoActivity, ACTIVITY, GOALS };
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
   if (window.lucide) {
     lucide.createIcons();
@@ -111,6 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const targetStorageKey = `calorieTarget_${email}`;
     const recipeStorageKey = `customRecipes_${email}`;
     const waterStorageKey = `water_${email}`;
+    const macroStorageKey = `macroTargets_${email}`;
     const WATER_GOAL = 2500;
     const WATER_STEP = 250;
     const MEALS = ['Reggeli', 'Ebéd', 'Uzsonna', 'Vacsora'];
@@ -262,9 +375,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Makrók: gramm + a kalóriából való arány
-      $('totalProtein').textContent = `${totalProtein} g`;
-      $('totalCarbs').textContent = `${totalCarbs} g`;
-      $('totalFat').textContent = `${totalFat} g`;
+      // Ha a profilban kiszámolt, aktuális makrócélok vannak, megmutatjuk a "bevitt / cél" értéket
+      const macroGoals = (() => {
+        try {
+          const m = JSON.parse(localStorage.getItem(macroStorageKey));
+          return m && Number(m.kcal) === dailyTarget ? m : null;
+        } catch (err) { return null; }
+      })();
+      const withGoal = (val, goal) => goal ? `${val} / ${goal} g` : `${val} g`;
+      $('totalProtein').textContent = withGoal(totalProtein, macroGoals && macroGoals.protein);
+      $('totalCarbs').textContent = withGoal(totalCarbs, macroGoals && macroGoals.carbs);
+      $('totalFat').textContent = withGoal(totalFat, macroGoals && macroGoals.fat);
       const macroKcal = totalProtein * 4 + totalCarbs * 4 + totalFat * 9;
       const pctOf = (kcal) => macroKcal ? Math.round(kcal / macroKcal * 100) : 0;
       $('pctProtein').textContent = `${pctOf(totalProtein * 4)}%`;
@@ -333,6 +454,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const newTarget = prompt('Add meg az új napi kalóriakeretet (kcal):', getTarget());
         if (newTarget && !isNaN(newTarget) && Number(newTarget) > 0) {
           localStorage.setItem(targetStorageKey, newTarget);
+          try {
+            const pk = `profile_${email}`;
+            const pr = JSON.parse(localStorage.getItem(pk));
+            if (pr) { pr.calories = Number(newTarget); localStorage.setItem(pk, JSON.stringify(pr)); }
+          } catch (err) { /* a profil nem kritikus */ }
           renderAll();
         }
       });
@@ -873,4 +999,168 @@ document.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
     }
   }
+
+  // ==========================================
+  // 6. CSOPORT LÉTREHOZÁSA / CSATLAKOZÁS (INDEX.HTML)
+  // ==========================================
+  const noGroupView = document.getElementById('noGroupView');
+  const activeGroupView = document.getElementById('activeGroupView');
+
+  if (noGroupView && activeGroupView && currentUser) {
+    const groupKey = 'userGroup_' + currentUser.email;
+    const getGroup = () => JSON.parse(localStorage.getItem(groupKey)) || null;
+    const saveGroup = (g) => localStorage.setItem(groupKey, JSON.stringify(g));
+    const escapeHtml = (str) => String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const initialsOf = (name) => {
+      const p = name.trim().split(' ');
+      return (p.length >= 2 ? p[0][0] + p[p.length - 1][0] : (p[0][0] || '')).toUpperCase();
+    };
+
+    const myGroupName = document.getElementById('myGroupName');
+    const myGroupDesc = document.getElementById('myGroupDesc');
+    const myGroupPlan = document.getElementById('myGroupPlan');
+    const groupTodayTitle = document.getElementById('groupTodayTitle');
+    const groupTodayText = document.getElementById('groupTodayText');
+    const groupStartBtn = document.getElementById('groupStartBtn');
+    const groupMemberList = document.getElementById('groupMemberList');
+    const groupChatMessages = document.getElementById('groupChatMessages');
+    const groupChatForm = document.getElementById('groupChatForm');
+    const groupChatInput = document.getElementById('groupChatInput');
+    const createGroupForm = document.getElementById('createGroupForm');
+    const leaveGroupBtn = document.getElementById('leaveGroupBtn');
+
+    const renderChat = (group) => {
+      groupChatMessages.innerHTML = (group.messages || []).length === 0
+        ? '<div class="chat-msg"><div style="color: var(--muted);">Még nincs üzenet. Írj elsőként!</div></div>'
+        : group.messages.map(m => `
+            <div class="chat-msg">
+              <div class="chat-author">${escapeHtml(m.author)}</div>
+              <div>${escapeHtml(m.text)}</div>
+            </div>`).join('');
+      groupChatMessages.scrollTop = groupChatMessages.scrollHeight;
+    };
+
+    const renderGroup = () => {
+      const group = getGroup();
+      if (!group) {
+        noGroupView.style.display = 'block';
+        activeGroupView.style.display = 'none';
+        return;
+      }
+
+      noGroupView.style.display = 'none';
+      activeGroupView.style.display = 'block';
+
+      myGroupName.textContent = group.name;
+      myGroupDesc.textContent = group.desc || 'A közös cél a maximális fejlődés!';
+
+      const plan = getAllWorkoutPlans()[group.planId];
+      const planTitle = plan ? plan.title : 'Egyéni terv';
+      myGroupPlan.textContent = 'Közös terv: ' + planTitle;
+
+      // Mai edzés a terv ütemezéséből
+      const todayIdx = (new Date().getDay() + 6) % 7; // hétfő = 0
+      const todayEntry = plan && Array.isArray(plan.schedule) ? plan.schedule[todayIdx] : null;
+      groupTodayTitle.textContent = todayEntry
+        ? 'Mai közös edzés: ' + todayEntry.name
+        : 'Mai közös edzés: ' + planTitle;
+      groupTodayText.textContent = todayEntry && Array.isArray(todayEntry.details)
+        ? todayEntry.details.join(' · ')
+        : 'Nézd meg a terv részleteit az edzés indításához.';
+      groupStartBtn.href = 'workout-detail.html?id=' + encodeURIComponent(group.planId);
+
+      groupMemberList.innerHTML = group.members.map(m => `
+        <div class="member-item">
+          <div class="member-user">
+            <div class="member-avatar">${escapeHtml(initialsOf(m.name))}</div>
+            <span style="font-size: 0.88rem; font-weight: 500;">${escapeHtml(m.name)}${m.email === currentUser.email ? ' (Ti)' : ''}</span>
+          </div>
+          <span class="status-pending">${m.role === 'admin' ? 'Alapító' : 'Tag'}</span>
+        </div>`).join('');
+
+      renderChat(group);
+      if (window.lucide) lucide.createIcons();
+    };
+
+    const buildGroup = (name, desc, planId) => ({
+      name,
+      desc,
+      planId,
+      members: [{ name: currentUser.name, email: currentUser.email, role: 'admin' }],
+      messages: []
+    });
+
+    // Új csoport létrehozása (alapértelmezett vagy egyéni edzéstervvel)
+    if (createGroupForm) {
+      createGroupForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const name = document.getElementById('g-name').value.trim();
+        const desc = document.getElementById('g-desc').value.trim();
+        let planId = document.getElementById('g-plan').value;
+
+        if (!name) return;
+
+        if (planId === 'custom_new') {
+          const customTitle = document.getElementById('g-custom-plan-title').value.trim() || (name + ' terv');
+          const customText = document.getElementById('g-custom-exercises').value;
+          planId = 'custom_' + Date.now();
+
+          const customPlans = getCustomPlans();
+          customPlans[planId] = {
+            title: customTitle,
+            subtitle: 'Csoportos edzésterv – ' + name,
+            description: desc || ('A(z) ' + name + ' csoport saját edzésterve.'),
+            image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=800&auto=format&fit=crop',
+            schedule: getPresetSchedule('custom', customText)
+          };
+          localStorage.setItem('customWorkoutPlans', JSON.stringify(customPlans));
+        }
+
+        saveGroup(buildGroup(name, desc, planId));
+
+        createGroupForm.reset();
+        const extraFields = document.getElementById('newPlanGroupFields');
+        if (extraFields) extraFields.style.display = 'none';
+        groupModal.classList.remove('open');
+
+        renderGroup();
+      });
+    }
+
+    // Csatlakozás nyilvános csoporthoz
+    document.querySelectorAll('.btn-join[data-name]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        saveGroup(buildGroup(btn.dataset.name, btn.dataset.desc || '', btn.dataset.plan));
+        renderGroup();
+      });
+    });
+
+    // Kilépés
+    if (leaveGroupBtn) {
+      leaveGroupBtn.addEventListener('click', () => {
+        if (!confirm('Biztosan kilépsz a csoportból?')) return;
+        localStorage.removeItem(groupKey);
+        renderGroup();
+      });
+    }
+
+    // Üzenőfal
+    if (groupChatForm) {
+      groupChatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = groupChatInput.value.trim();
+        const group = getGroup();
+        if (!text || !group) return;
+        group.messages = group.messages || [];
+        group.messages.push({ author: currentUser.name, text });
+        saveGroup(group);
+        groupChatInput.value = '';
+        renderChat(group);
+      });
+    }
+
+    renderGroup();
+  }
+
 });
